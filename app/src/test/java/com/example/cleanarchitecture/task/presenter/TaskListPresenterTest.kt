@@ -1,9 +1,10 @@
 package com.example.cleanarchitecture.task.presenter
 
-import com.example.cleanarchitecture.core.TestSchedulerProvider
-import com.example.cleanarchitecture.datasource.data.Task
+import com.example.cleanarchitecture.platform.TestSchedulerProvider
+import com.example.cleanarchitecture.domain.model.Task
 import com.example.cleanarchitecture.task.models.TaskModel
-import com.example.cleanarchitecture.task.view.TaskListView
+import com.example.cleanarchitecture.ui.task.TaskListView
+import com.example.cleanarchitecture.ui.task.TaskListPresenter
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
@@ -18,11 +19,14 @@ class TaskListPresenterTest : Spek({
     val view: TaskListView by memoized { mock<TaskListView>() }
 
     val presenter: TaskListPresenter by memoized {
-        TaskListPresenter(model, schedulerProvider)
+        TaskListPresenter(
+            model,
+            schedulerProvider
+        )
     }
 
     describe("getting tasks") {
-        val tasks = arrayOf(Task("X"))
+        val tasks = arrayOf(com.example.cleanarchitecture.domain.model.Task("X"))
         context("when presenter gets tasks") {
 
             beforeEachTest {

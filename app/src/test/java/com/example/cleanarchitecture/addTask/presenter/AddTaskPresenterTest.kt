@@ -1,10 +1,11 @@
 package com.example.cleanarchitecture.addTask.presenter
 
 import com.example.cleanarchitecture.addTask.models.AddTaskModel
-import com.example.cleanarchitecture.addTask.view.AddTaskView
-import com.example.cleanarchitecture.core.StringService
-import com.example.cleanarchitecture.core.TestSchedulerProvider
-import com.example.cleanarchitecture.datasource.data.Task
+import com.example.cleanarchitecture.ui.addTask.AddTaskView
+import com.example.cleanarchitecture.platform.StringService
+import com.example.cleanarchitecture.platform.TestSchedulerProvider
+import com.example.cleanarchitecture.domain.model.Task
+import com.example.cleanarchitecture.ui.addTask.AddTaskPresenter
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
@@ -20,11 +21,15 @@ class AddTaskPresenterTest : Spek({
 
     val stringService by memoized { mock<StringService>() }
     val presenter: AddTaskPresenter by memoized {
-        AddTaskPresenter(model, schedulerProvider, stringService)
+        AddTaskPresenter(
+            model,
+            schedulerProvider,
+            stringService
+        )
     }
 
     describe("adding tasks") {
-        val task = Task("xyz")
+        val task = com.example.cleanarchitecture.domain.model.Task("xyz")
 
         context("when presenter inserts task") {
 

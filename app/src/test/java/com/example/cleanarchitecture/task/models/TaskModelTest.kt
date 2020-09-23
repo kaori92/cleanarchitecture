@@ -1,7 +1,7 @@
 package com.example.cleanarchitecture.task.models
 
-import com.example.cleanarchitecture.datasource.data.Task
-import com.example.cleanarchitecture.task.datasource.TaskDataSource
+import com.example.cleanarchitecture.domain.model.Task
+import com.example.cleanarchitecture.data.source.TaskDataSource
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Single
@@ -10,8 +10,8 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
 class TaskModelTest : Spek({
-    val taskDataSource: TaskDataSource by memoized {
-        mock<TaskDataSource>()
+    val taskDataSource: com.example.cleanarchitecture.data.source.TaskDataSource by memoized {
+        mock<com.example.cleanarchitecture.data.source.TaskDataSource>()
     }
 
     val model: TaskModel by memoized {
@@ -19,11 +19,11 @@ class TaskModelTest : Spek({
     }
 
     describe("get all tasks") {
-        lateinit var testObserver: TestObserver<Array<Task>>
+        lateinit var testObserver: TestObserver<Array<com.example.cleanarchitecture.domain.model.Task>>
 
         context("when getting all tasks") {
 
-            val tasks = arrayOf(Task("x"))
+            val tasks = arrayOf(com.example.cleanarchitecture.domain.model.Task("x"))
 
             beforeEachTest {
                 given(taskDataSource.getAllTasks()).willReturn(Single.just(tasks))

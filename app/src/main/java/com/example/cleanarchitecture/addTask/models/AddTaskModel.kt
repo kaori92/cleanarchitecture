@@ -1,6 +1,6 @@
 package com.example.cleanarchitecture.addTask.models
 
-import com.example.cleanarchitecture.datasource.data.Task
+import com.example.cleanarchitecture.domain.model.Task
 import io.reactivex.Completable
 
 interface AddTaskModel {

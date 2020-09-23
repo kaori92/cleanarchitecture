@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:name=".core.MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".task.view.TaskListActivity"
+            android:name=".ui.task.TaskListActivity"
             android:label="@string/tasks_list">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +22,7 @@
         </activity>
 
         <activity
-            android:name=".addTask.view.AddTaskActivity"
+            android:name=".ui.addTask.AddTaskActivity"
             android:label="@string/add_task"/>
     </application>
 

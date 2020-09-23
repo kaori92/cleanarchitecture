@@ -1,7 +1,7 @@
 package com.example.cleanarchitecture.addTask.models
 
-import com.example.cleanarchitecture.datasource.data.Task
-import com.example.cleanarchitecture.task.datasource.TaskDataSource
+import com.example.cleanarchitecture.domain.model.Task
+import com.example.cleanarchitecture.data.source.TaskDataSource
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Completable
@@ -12,8 +12,8 @@ import org.spekframework.spek2.style.specification.describe
 class AddTaskModelTest : Spek({
     lateinit var testObserver: TestObserver<Void>
 
-    val taskDataSource: TaskDataSource by memoized {
-        mock<TaskDataSource>()
+    val taskDataSource: com.example.cleanarchitecture.data.source.TaskDataSource by memoized {
+        mock<com.example.cleanarchitecture.data.source.TaskDataSource>()
     }
 
     val model: AddTaskModel by memoized {
@@ -21,7 +21,7 @@ class AddTaskModelTest : Spek({
     }
 
     describe("insert Or Update Task") {
-        val task = Task("abc")
+        val task = com.example.cleanarchitecture.domain.model.Task("abc")
 
         context("when inserting task") {
             beforeEachTest {

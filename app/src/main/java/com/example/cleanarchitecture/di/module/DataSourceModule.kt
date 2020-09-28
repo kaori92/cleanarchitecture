@@ -39,7 +39,7 @@ class DataSourceModule {
     fun provideLocalDataSource(
         database: TaskDatabase,
         mapper: TaskDbEntityMapper
-    ): LocalSource = TaskLocalSource(database, mapper)
+    ): LocalSource = TaskLocalSource(database.taskDao(), mapper)
 
     @Singleton
     @Provides

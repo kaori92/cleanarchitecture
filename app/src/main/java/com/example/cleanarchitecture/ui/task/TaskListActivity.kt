@@ -14,8 +14,7 @@ import kotlinx.android.synthetic.main.activity_task_list.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
-class TaskListActivity : BaseActivity(),
-    TaskListView {
+class TaskListActivity : BaseActivity(), TaskListView {
 
     private val component by lazy {
         (applicationContext as MyApplication).appComponent
@@ -36,21 +35,12 @@ class TaskListActivity : BaseActivity(),
         setContentView(R.layout.activity_task_list)
 
         setSupportActionBar(findViewById(R.id.my_toolbar))
-    }
 
-    override fun onResume() {
-        super.onResume()
-
-        taskListPresenter.getAllTasks()
+        taskListPresenter.getAllTasksLocally()
         recyclerView.adapter?.notifyDataSetChanged()
     }
 
-    override fun refresh() {
-        taskListPresenter.getAllTasks()
-        recyclerView.adapter?.notifyDataSetChanged()
-    }
-
-    override fun setUpRecyclerView(tasks: Array<com.example.cleanarchitecture.domain.model.Task>) {
+    override fun setUpRecyclerView(tasks: Array<Task>) {
         viewAdapter = TaskAdapter(tasks)
 
         recyclerView.apply {
@@ -69,6 +59,8 @@ class TaskListActivity : BaseActivity(),
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_add -> handleAddSelected()
+        R.id.action_show_local -> handleShowLocalSelected()
+        R.id.action_show_remote -> handleShowRemoteSelected()
 
         else -> {
             super.onOptionsItemSelected(item)
@@ -78,6 +70,18 @@ class TaskListActivity : BaseActivity(),
     private fun handleAddSelected(): Boolean {
         val intent = Intent(this, AddTaskActivity::class.java)
         startActivity(intent)
+        return true
+    }
+
+    private fun handleShowLocalSelected(): Boolean {
+        taskListPresenter.getAllTasksLocally()
+        recyclerView.adapter?.notifyDataSetChanged()
+        return true
+    }
+
+    private fun handleShowRemoteSelected(): Boolean {
+        taskListPresenter.getAllTasksRemotely()
+        recyclerView.adapter?.notifyDataSetChanged()
         return true
     }
 

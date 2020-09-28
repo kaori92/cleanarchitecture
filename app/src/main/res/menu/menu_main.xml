@@ -5,9 +5,19 @@
     tools:context=".exchange.view.ExchangeActivity">
 
     <item
+        android:id="@+id/action_show_local"
+        android:title="@string/show_locally"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_show_remote"
+        android:title="@string/show_remotely"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_add"
         android:icon="@drawable/plus"
         android:title="@string/add"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
 </menu>

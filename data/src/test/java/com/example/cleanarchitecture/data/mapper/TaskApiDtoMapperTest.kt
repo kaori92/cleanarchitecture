@@ -7,7 +7,7 @@ import org.junit.Test
 
 class TaskApiDtoMapperTest {
 
-    val mapper = TaskApiDtoMapper()
+    private val mapper = TaskApiDtoMapper()
     private val title = "Test"
 
     @Test

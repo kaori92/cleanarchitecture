@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">CleanArchitecture</string>
     <string name="add">Add</string>
+    <string name="add_locally">Add locally</string>
+    <string name="add_remotely">Add remotely</string>
     <string name="task_added">Task added</string>
     <string name="tasks_list">List of tasks</string>
     <string name="add_task">Add task</string>
+    <string name="show_locally">Local</string>
+    <string name="show_remotely">Remote</string>
 </resources>

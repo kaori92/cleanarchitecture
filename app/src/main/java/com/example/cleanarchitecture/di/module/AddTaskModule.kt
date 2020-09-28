@@ -1,11 +1,11 @@
 package com.example.cleanarchitecture.di.module
 
-import com.example.cleanarchitecture.addTask.models.AddTaskModel
-import com.example.cleanarchitecture.addTask.models.DefaultAddTaskModel
+import com.example.cleanarchitecture.data.repository.TaskRepositoryImpl
+import com.example.cleanarchitecture.domain.interactor.DefaultAddTaskModel
+import com.example.cleanarchitecture.domain.interactor.definition.AddTaskModel
 import com.example.cleanarchitecture.ui.addTask.AddTaskPresenter
 import com.example.cleanarchitecture.platform.AndroidSchedulerProvider
 import com.example.cleanarchitecture.platform.StringService
-import com.example.cleanarchitecture.data.source.local.TaskLocalSource
 import dagger.Module
 import dagger.Provides
 
@@ -15,9 +15,9 @@ object AddTaskModule {
     @JvmStatic
     @Provides
     fun provideModel(
-        taskDataSource: TaskLocalSource // todo add remote
+        taskRepositoryImpl: TaskRepositoryImpl
     ): AddTaskModel =
-        DefaultAddTaskModel(taskDataSource)
+        DefaultAddTaskModel(taskRepositoryImpl)
 
     @JvmStatic
     @Provides

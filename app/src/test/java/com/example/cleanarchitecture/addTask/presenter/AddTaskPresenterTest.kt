@@ -1,6 +1,6 @@
 package com.example.cleanarchitecture.addTask.presenter
 
-import com.example.cleanarchitecture.addTask.models.AddTaskModel
+import com.example.cleanarchitecture.domain.interactor.definition.AddTaskModel
 import com.example.cleanarchitecture.ui.addTask.AddTaskView
 import com.example.cleanarchitecture.platform.StringService
 import com.example.cleanarchitecture.platform.TestSchedulerProvider
@@ -28,16 +28,17 @@ class AddTaskPresenterTest : Spek({
         )
     }
 
-    describe("adding tasks") {
-        val task = com.example.cleanarchitecture.domain.model.Task("xyz")
+    val task = Task("xyz")
+    val error = Throwable("error")
 
+    describe("inserting tasks locally") {
         context("when presenter inserts task") {
 
             beforeEachTest {
-                given(model.insertOrUpdateTask(task)).willReturn(Completable.complete())
+                given(model.insertTaskLocally(task)).willReturn(Completable.complete())
 
                 presenter.attachView(view)
-                presenter.insertOrUpdateTask(task)
+                presenter.insertTaskLocally(task)
             }
 
             it("should call view openTaskList") {
@@ -46,13 +47,41 @@ class AddTaskPresenterTest : Spek({
         }
 
         context("when error is returned") {
-            val error = Throwable("error")
-
             beforeEachTest {
-                given(model.insertOrUpdateTask(task)).willReturn(Completable.error(error))
+                given(model.insertTaskLocally(task)).willReturn(Completable.error(error))
 
                 presenter.attachView(view)
-                presenter.insertOrUpdateTask(task)
+                presenter.insertTaskLocally(task)
+            }
+
+            it("should show error") {
+                verify(view).showError(any())
+            }
+        }
+    }
+
+    describe("inserting tasks remotely") {
+
+        context("when presenter inserts task") {
+
+            beforeEachTest {
+                given(model.insertTaskRemotely(task)).willReturn(Completable.complete())
+
+                presenter.attachView(view)
+                presenter.insertTaskRemotely(task)
+            }
+
+            it("should call view openTaskList") {
+                verify(view).openTaskList()
+            }
+        }
+
+        context("when error is returned") {
+            beforeEachTest {
+                given(model.insertTaskRemotely(task)).willReturn(Completable.error(error))
+
+                presenter.attachView(view)
+                presenter.insertTaskRemotely(task)
             }
 
             it("should show error") {

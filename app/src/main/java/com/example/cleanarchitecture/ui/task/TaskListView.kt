@@ -8,8 +8,5 @@ import moxy.viewstate.strategy.StateStrategyType
 interface TaskListView : BaseView {
 
     @StateStrategyType(AddToEndStrategy::class)
-    fun setUpRecyclerView(tasks: Array<com.example.cleanarchitecture.domain.model.Task>)
-
-    @StateStrategyType(AddToEndStrategy::class)
-    fun refresh()
+    fun setUpRecyclerView(tasks: Array<Task>)
 }

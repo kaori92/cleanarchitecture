@@ -14,5 +14,5 @@ interface TaskRetrofitService {
     fun getTasks(): Single<List<TaskApiDto>>
 
     @POST(TODOS_FIELD_NAME)
-    fun addTask(@Body taskRequest: TaskApiDto): Completable
+    fun insertTask(@Body taskRequest: TaskApiDto): Completable
 }

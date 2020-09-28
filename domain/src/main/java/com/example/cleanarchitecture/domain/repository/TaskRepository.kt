@@ -9,11 +9,11 @@ import io.reactivex.Single
  * Access point for managing task data.
  */
 interface TaskRepository {
-    fun insertOrUpdateTaskLocally(task: Task): Completable
+    fun insertTaskLocally(task: Task): Completable
 
     fun getAllTasksLocally(): Single<List<Task>>
 
-    fun insertOrUpdateTaskRemotely(task: Task): Completable
+    fun insertTaskRemotely(task: Task): Completable
 
     fun getAllTasksRemotely(): Single<List<Task>>
 }

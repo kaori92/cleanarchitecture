@@ -9,7 +9,7 @@ import com.example.cleanarchitecture.R
 import com.example.cleanarchitecture.domain.model.Task
 
 class TaskAdapter(
-    private val tasks: Array<com.example.cleanarchitecture.domain.model.Task>
+    private val tasks: Array<Task>
 ) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

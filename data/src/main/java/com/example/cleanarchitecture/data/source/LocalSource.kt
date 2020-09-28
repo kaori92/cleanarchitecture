@@ -5,6 +5,6 @@ import io.reactivex.Completable
 import io.reactivex.Single
 
 interface LocalSource {
-    fun insertOrUpdateTask(task: Task): Completable
+    fun insertTask(task: Task): Completable
     fun getAllTasks(): Single<List<Task>>
 }

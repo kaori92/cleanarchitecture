@@ -29,8 +29,9 @@ class AddTaskActivity : BaseActivity(),
     @InjectPresenter
     lateinit var presenter: AddTaskPresenter
 
-    lateinit var editText: EditText
-    lateinit var submitButton: Button
+    private lateinit var editText: EditText
+    private lateinit var submitLocallyButton: Button
+    private lateinit var submitRemotelyButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,11 +44,20 @@ class AddTaskActivity : BaseActivity(),
         setSupportActionBar(findViewById(R.id.my_toolbar))
 
         editText = findViewById(R.id.edit_text)
-        submitButton = findViewById(R.id.submit_button)
+        submitLocallyButton = findViewById(R.id.submit_locally_button)
+        submitRemotelyButton = findViewById(R.id.submit_remotely_button)
 
-        submitButton.setOnClickListener {
-            presenter.insertOrUpdateTask(
-                com.example.cleanarchitecture.domain.model.Task(
+        submitLocallyButton.setOnClickListener {
+            presenter.insertTaskLocally(
+                Task(
+                    editText.text.toString()
+                )
+            )
+        }
+
+        submitRemotelyButton.setOnClickListener {
+            presenter.insertTaskRemotely(
+                Task(
                     editText.text.toString()
                 )
             )

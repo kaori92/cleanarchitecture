@@ -1,4 +1,7 @@
-include ':domain'
-include ':data'
-include ':app'
+include ':core-domain'
+include ':core-data'
+include ':core-app'
+include ':task-domain'
+include ':task-data'
+include ':task-presentation'
 rootProject.name = "CleanArchitecture"

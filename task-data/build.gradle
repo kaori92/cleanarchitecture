@@ -8,10 +8,11 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -24,6 +25,22 @@ android {
     }
 }
 
+kotlin {
+    sourceSets {
+        commonTest {
+            dependencies {
+                implementation kotlin('test-junit')
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-test-junit"
+            }
+        }
+    }
+}
+
 def room_version = '2.2.5'
 def daggerVersion = '2.27'
 
@@ -31,6 +48,7 @@ dependencies {
 
     implementation project(":task-domain")
     implementation project(":core-data")
+    implementation project(":core-app")
     implementation project(":core-domain")
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -42,6 +60,13 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    //RETROFIT etc.
+    implementation 'com.squareup.retrofit2:retrofit:2.7.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
     annotationProcessor 'com.google.dagger:dagger-compiler:' + daggerVersion
     implementation 'com.google.dagger:dagger-android:' + daggerVersion

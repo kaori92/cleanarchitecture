@@ -5,5 +5,6 @@ import io.reactivex.Completable
 
 interface AddTaskModel {
 
-    fun insertTask(task: Task, isOnline: Boolean): Completable
+    fun insertTask(task: Task): Completable
+    fun getStringResource(id: Int): String
 }

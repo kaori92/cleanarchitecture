@@ -1,6 +1,5 @@
 package com.example.cleanarchitecture.di.module
 
-import android.content.Context
 import com.example.cleanarchitecture.connectivity.ConnectivityChecker
 import com.example.cleanarchitecture.data.repository.TaskRepositoryImpl
 import com.example.cleanarchitecture.domain.interactor.DefaultTaskModel
@@ -15,20 +14,20 @@ object TaskModule {
 
     @Provides
     internal fun provideModel(
-        taskRepositoryImpl: TaskRepositoryImpl
+        taskRepositoryImpl: TaskRepositoryImpl,
+        connectivityChecker: ConnectivityChecker
     ): TaskModel =
-        DefaultTaskModel(taskRepositoryImpl)
+        DefaultTaskModel(
+            taskRepositoryImpl,
+            connectivityChecker
+        )
 
     @Provides
     fun providePresenter(
-        model: TaskModel,
-        connectivityChecker: ConnectivityChecker,
-        context: Context
+        model: TaskModel
     ): TaskListPresenter =
         TaskListPresenter(
             model,
-            AndroidSchedulerProvider,
-            connectivityChecker,
-            context
+            AndroidSchedulerProvider
         )
 }

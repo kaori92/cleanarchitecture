@@ -1,5 +1,6 @@
-package com.example.cleanarchitecture.di.module
+package com.example.cleanarchitecture.data.source.di
 
+import android.content.Context
 import androidx.room.Room
 import com.example.cleanarchitecture.MyApplication
 import com.example.cleanarchitecture.data.mapper.TaskApiDtoMapper
@@ -25,7 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class DataSourceModule {
 
     @Provides
-    fun provideDatabase(applicationContext: MyApplication): TaskDatabase {
+    fun provideDatabase(applicationContext: Context): TaskDatabase {
         return Room.databaseBuilder(
             applicationContext,
             TaskDatabase::class.java, TASK_DATABASE_NAME

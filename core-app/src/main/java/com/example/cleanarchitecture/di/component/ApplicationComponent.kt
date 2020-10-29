@@ -9,7 +9,6 @@ import dagger.Component
 @Component(
     modules = [
         AppModule::class,
-        DataSourceModule::class,
         StringServiceModule::class
     ]
 )

@@ -1,33 +1,27 @@
 package com.example.cleanarchitecture.ui.addTask
 
-import android.content.Context
 import android.util.Log
 import com.example.cleanarchitecture.R
 import com.example.cleanarchitecture.domain.interactor.definition.AddTaskModel
 import com.example.cleanarchitecture.ui.core.BasePresenter
 import com.example.cleanarchitecture.scheduler.SchedulerProvider
-import com.example.cleanarchitecture.string.StringService
 import com.example.cleanarchitecture.TAG
-import com.example.cleanarchitecture.connectivity.ConnectivityChecker
 import com.example.cleanarchitecture.domain.model.Task
 import moxy.InjectViewState
 
 @InjectViewState
 class AddTaskPresenter(
     private val model: AddTaskModel,
-    private val schedulerProvider: SchedulerProvider,
-    private val stringService: StringService,
-    private val connectivityChecker: ConnectivityChecker,
-    private val context: Context
+    private val schedulerProvider: SchedulerProvider
 ) : BasePresenter<AddTaskView>() {
 
     fun insertTask(task: Task) {
-        val disposable = model.insertTask(task, connectivityChecker.isOnline(context))
+        val disposable = model.insertTask(task)
             .observeOn(schedulerProvider.main())
             .subscribeOn(schedulerProvider.io())
             .subscribe({
                 viewState.showToast(
-                    stringService.getStringResource(
+                    model.getStringResource(
                         R.string.task_added
                     )
                 )

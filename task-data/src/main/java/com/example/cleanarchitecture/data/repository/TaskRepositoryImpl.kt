@@ -1,8 +1,10 @@
 package com.example.cleanarchitecture.data.repository
 
-import android.os.SystemClock
+import com.example.cleanarchitecture.data.exception.CachePassedException
+import com.example.cleanarchitecture.data.exception.NoInternetException
 import com.example.cleanarchitecture.data.source.LocalSource
 import com.example.cleanarchitecture.data.source.RemoteSource
+import com.example.cleanarchitecture.data.time.TimeService
 import com.example.cleanarchitecture.domain.model.Task
 import com.example.cleanarchitecture.domain.repository.TaskRepository
 import io.reactivex.Completable
@@ -14,52 +16,30 @@ class TaskRepositoryImpl
 @Inject
 constructor(
     private val remoteSource: RemoteSource,
-    private val localSource: LocalSource
+    private val localSource: LocalSource,
+    private val timeService: TimeService
 ) : TaskRepository {
 
-    private val cacheLimit = 10 // smaller value for testing
-    private var endTime: Long = 0
-    private var elapsedMilliSeconds: Long = 0
-    private var elapsedSeconds: Long = 0
-
     override fun insertTask(task: Task, isOnline: Boolean): Completable {
-        val startTime: Long = SystemClock.elapsedRealtime()
-
         return if (isOnline) {
             remoteSource.insertTask(task)
             localSource.insertTask(task)
         } else {
-            endTime = SystemClock.elapsedRealtime()
-            elapsedMilliSeconds = endTime - startTime
-            elapsedSeconds = elapsedMilliSeconds / 1000
-
-            handleCache(startTime)
-
-            localSource.insertTask(task)
+            throw NoInternetException("No internet - failed to insert task")
         }
     }
 
     override fun getAllTasks(isOnline: Boolean): Single<List<Task>> {
-        val startTime: Long = SystemClock.elapsedRealtime()
-
         return if (isOnline) {
+            timeService.setCacheTimestampMs(timeService.getTime())
             remoteSource.getAllTasks()
         } else {
-            endTime = SystemClock.elapsedRealtime()
-            elapsedMilliSeconds = endTime - startTime
-            elapsedSeconds = elapsedMilliSeconds / 1000
-
-            handleCache(startTime)
-
-            localSource.getAllTasks()
-        }
-    }
-
-    private fun handleCache(startTime: Long){
-        while (elapsedSeconds < cacheLimit) {
-            endTime = SystemClock.elapsedRealtime()
-            elapsedMilliSeconds = endTime - startTime
-            elapsedSeconds = elapsedMilliSeconds / 1000
+            if (timeService.getTime() - timeService.getCacheTimestampMs() > timeService.getCacheLimitMs()) {
+                throw CachePassedException("Cache limit passed")
+            } else {
+                timeService.setCacheTimestampMs(timeService.getTime())
+                localSource.getAllTasks()
+            }
         }
     }
 

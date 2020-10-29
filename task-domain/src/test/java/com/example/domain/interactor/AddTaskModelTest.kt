@@ -1,9 +1,11 @@
 package com.example.domain.interactor
 
+import com.example.cleanarchitecture.connectivity.ConnectivityChecker
 import com.example.cleanarchitecture.domain.interactor.DefaultAddTaskModel
 import com.example.cleanarchitecture.domain.interactor.definition.AddTaskModel
 import com.example.cleanarchitecture.domain.model.Task
 import com.example.cleanarchitecture.domain.repository.TaskRepository
+import com.example.cleanarchitecture.string.StringService
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Completable
@@ -14,58 +16,39 @@ import org.spekframework.spek2.style.specification.describe
 class AddTaskModelTest : Spek({
     lateinit var testObserver: TestObserver<Void>
 
-    val taskRepository: TaskRepository by memoized {
-        mock<TaskRepository>()
-    }
+    val taskRepository: TaskRepository by memoized { mock<TaskRepository>() }
+    val stringService: StringService by memoized { mock<StringService>() }
+    val connectivityChecker: ConnectivityChecker by memoized { mock<ConnectivityChecker>() }
 
     val model: AddTaskModel by memoized {
-        DefaultAddTaskModel(taskRepository)
+        DefaultAddTaskModel(taskRepository, stringService, connectivityChecker)
     }
+
     val task = Task("abc")
     val error = Throwable("error")
+    val isOnline = true
 
     describe("insertTask") {
-        context("when inserting task locally") {
+        context("when inserting task succeeds") {
             beforeEachTest {
-                given(taskRepository.insertTaskLocally(task)).willReturn(Completable.complete())
+                given(connectivityChecker.isOnline()).willReturn(isOnline)
+                given(taskRepository.insertTask(task, isOnline)).willReturn(Completable.complete())
 
-                testObserver = model.insertTaskLocally(task).test()
+                testObserver = model.insertTask(task).test()
             }
 
             it("should completable be completed") {
                 testObserver.assertComplete()
             }
+
         }
 
-        context("when inserting task locally failed") {
+        context("when inserting task failed") {
             beforeEachTest {
-                given(taskRepository.insertTaskLocally(task)).willReturn(Completable.error(error))
+                given(connectivityChecker.isOnline()).willReturn(isOnline)
+                given(taskRepository.insertTask(task, isOnline)).willReturn(Completable.error(error))
 
-                testObserver = model.insertTaskLocally(task).test()
-            }
-
-            it("should return error") {
-                testObserver.assertError(error)
-            }
-        }
-
-        context("when inserting task remotely") {
-            beforeEachTest {
-                given(taskRepository.insertTaskRemotely(task)).willReturn(Completable.complete())
-
-                testObserver = model.insertTaskRemotely(task).test()
-            }
-
-            it("should completable be completed") {
-                testObserver.assertComplete()
-            }
-        }
-
-        context("when inserting task remotely failed") {
-            beforeEachTest {
-                given(taskRepository.insertTaskRemotely(task)).willReturn(Completable.error(error))
-
-                testObserver = model.insertTaskRemotely(task).test()
+                testObserver = model.insertTask(task).test()
             }
 
             it("should return error") {

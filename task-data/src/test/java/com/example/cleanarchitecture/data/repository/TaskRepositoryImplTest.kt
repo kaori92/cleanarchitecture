@@ -1,134 +1,119 @@
 package com.example.cleanarchitecture.data.repository
 
+import com.example.cleanarchitecture.data.exception.CachePassedException
+import com.example.cleanarchitecture.data.exception.NoInternetException
 import com.example.cleanarchitecture.data.source.LocalSource
 import com.example.cleanarchitecture.data.source.RemoteSource
+import com.example.cleanarchitecture.data.time.TimeService
 import com.example.cleanarchitecture.domain.model.Task
 import com.nhaarman.mockitokotlin2.given
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
+import kotlin.test.assertFailsWith
 
 class TaskRepositoryImplTest : Spek({
 
     val remoteSource by memoized { mock<RemoteSource>() }
-
     val localSource by memoized { mock<LocalSource>() }
+    val timeService by memoized { mock<TimeService>() }
 
     val taskRepository by memoized {
-        TaskRepositoryImpl(remoteSource, localSource)
+        TaskRepositoryImpl(remoteSource, localSource, timeService)
     }
 
     val task = Task("abc")
     val tasks = listOf(Task("abc"))
-    val tasksSingle = Single.just(tasks)
-    val error = Throwable("error")
     lateinit var testObserver: TestObserver<Void>
     lateinit var testObserverList: TestObserver<List<Task>>
 
-    describe("inserting task locally"){
-        context("when inserting task locally succeeds") {
+    describe("inserting task") {
+
+        context("when online") {
             beforeEachTest {
                 given(localSource.insertTask(task)).willReturn(Completable.complete())
 
-                testObserver = taskRepository.insertTaskLocally(task).test()
+                testObserver = taskRepository.insertTask(task, true).test()
             }
 
             it("should completable be completed") {
                 testObserver.assertComplete()
             }
-        }
 
-        context("when inserting task locally fails") {
-            beforeEachTest {
-                given(localSource.insertTask(task)).willReturn(Completable.error(error))
-
-                testObserver = taskRepository.insertTaskLocally(task).test()
+            it("should remoteSource call insertTask") {
+                verify(remoteSource).insertTask(task)
             }
 
+            it("should localSource call insertTask") {
+                verify(localSource).insertTask(task)
+            }
+        }
+
+        context("when offline") {
             it("should return error") {
-                testObserver.assertError(error)
+                assertFailsWith<NoInternetException> {
+                    taskRepository.insertTask(task, false)
+                }
             }
         }
     }
 
-    describe("inserting task remotely"){
-        context("when inserting task remotely succeeds") {
+    describe("getting tasks") {
+
+        context("when online") {
             beforeEachTest {
-                given(remoteSource.insertTask(task)).willReturn(Completable.complete())
-
-                testObserver = taskRepository.insertTaskRemotely(task).test()
+                given(remoteSource.getAllTasks()).willReturn(Single.just(tasks))
+                testObserverList = taskRepository.getAllTasks(true).test()
             }
 
-            it("should completable be completed") {
-                testObserver.assertComplete()
-            }
-        }
-
-        context("when inserting task remotely fails") {
-            beforeEachTest {
-                given(remoteSource.insertTask(task)).willReturn(Completable.error(error))
-
-                testObserver = taskRepository.insertTaskRemotely(task).test()
-            }
-
-            it("should return error") {
-                testObserver.assertError(error)
-            }
-        }
-    }
-
-    describe("getting tasks locally"){
-        context("when getting task locally succeeds") {
-            beforeEachTest {
-                given(localSource.getAllTasks()).willReturn(tasksSingle)
-
-                testObserverList = taskRepository.getAllTasksLocally().test()
-            }
-
-            it("should completable be completed") {
+            it("should return tasks") {
                 testObserverList.assertResult(tasks)
             }
+
+            it("should remoteSource call getAllTasks") {
+                verify(remoteSource).getAllTasks()
+            }
         }
 
-        context("when getting task locally fails") {
-            beforeEachTest {
-                given(localSource.getAllTasks()).willReturn(Single.error(error))
+        context("when offline") {
+            context("and cache limit passed") {
+                beforeEachTest {
+                    given(timeService.getTime()).willReturn(5000)
+                    given(timeService.getCacheTimestampMs()).willReturn(2000)
+                    given(timeService.getCacheLimitMs()).willReturn(1000)
+                }
 
-                testObserverList = taskRepository.getAllTasksLocally().test()
+                it("should return error") {
+                    assertFailsWith<CachePassedException> {
+                        taskRepository.getAllTasks(false)
+                    }
+                }
             }
 
-            it("should return error") {
-                testObserverList.assertError(error)
+            context("and cache limit NOT passed") {
+
+                beforeEachTest {
+                    given(timeService.getTime()).willReturn(2000)
+                    given(timeService.getCacheTimestampMs()).willReturn(5000)
+                    given(timeService.getCacheLimitMs()).willReturn(1000)
+
+                    given(localSource.getAllTasks()).willReturn(Single.just(tasks))
+                    testObserverList = taskRepository.getAllTasks(false).test()
+                }
+
+                it("should return tasks") {
+                    testObserverList.assertResult(tasks)
+                }
+
+                it("should localSource call getAllTasks") {
+                    verify(localSource).getAllTasks()
+                }
             }
         }
     }
 
-    describe("getting tasks remotely"){
-        context("when getting task remotely succeeds") {
-            beforeEachTest {
-                given(remoteSource.getAllTasks()).willReturn(tasksSingle)
-
-                testObserverList = taskRepository.getAllTasksRemotely().test()
-            }
-
-            it("should completable be completed") {
-                testObserverList.assertResult(tasks)
-            }
-        }
-
-        context("when getting task remotely fails") {
-            beforeEachTest {
-                given(remoteSource.getAllTasks()).willReturn(Single.error(error))
-
-                testObserverList = taskRepository.getAllTasksRemotely().test()
-            }
-
-            it("should return error") {
-                testObserverList.assertError(error)
-            }
-        }
-    }
 })

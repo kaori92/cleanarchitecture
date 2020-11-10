@@ -2,6 +2,8 @@ package com.example.cleanarchitecture.data.source.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.cleanarchitecture.data.TASKS_API_URL
+import com.example.cleanarchitecture.data.TASK_DATABASE_NAME
 import com.example.cleanarchitecture.data.mapper.TaskApiDtoMapper
 import com.example.cleanarchitecture.data.mapper.TaskDbEntityMapper
 import com.example.cleanarchitecture.data.source.LocalSource
@@ -10,9 +12,6 @@ import com.example.cleanarchitecture.data.source.local.DefaultTaskDatabase
 import com.example.cleanarchitecture.data.source.local.TaskLocalSource
 import com.example.cleanarchitecture.data.source.remote.TaskRemoteSource
 import com.example.cleanarchitecture.data.source.remote.TaskRetrofitService
-import com.example.cleanarchitecture.TASKS_API_URL
-import com.example.cleanarchitecture.TASK_DATABASE_NAME
-import com.example.cleanarchitecture.data.source.local.TaskDatabase
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -26,7 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class DataSourceModule {
 
     @Provides
-    fun provideDatabase(applicationContext: Context): TaskDatabase {
+    fun provideDatabase(applicationContext: Context): DefaultTaskDatabase {
         return Room.databaseBuilder(
             applicationContext,
             DefaultTaskDatabase::class.java, TASK_DATABASE_NAME

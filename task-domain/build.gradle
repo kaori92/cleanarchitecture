@@ -25,7 +25,6 @@ android {
 }
 
 dependencies {
-    implementation project(':core-app')
     implementation project(':core-domain')
 
     implementation fileTree(dir: "libs", include: ["*.jar"])

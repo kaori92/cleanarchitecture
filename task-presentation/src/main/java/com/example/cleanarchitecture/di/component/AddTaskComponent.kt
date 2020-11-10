@@ -12,9 +12,9 @@ import dagger.Component
     modules = [
         AddTaskModule::class,
         StringServiceModule::class,
-        DataSourceModule::class,
         ConnectivityModule::class,
-        TimeServiceModule::class
+        TimeServiceModule::class,
+        DataSourceModule::class
     ],
     dependencies = [
         ApplicationComponent::class

@@ -1,6 +1,6 @@
 include ':core-domain'
 include ':core-data'
-include ':core-app'
+include ':core-presentation'
 include ':task-domain'
 include ':task-data'
 include ':task-presentation'

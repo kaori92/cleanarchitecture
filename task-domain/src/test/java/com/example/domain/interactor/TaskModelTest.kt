@@ -5,7 +5,6 @@ import com.example.cleanarchitecture.domain.interactor.DefaultTaskModel
 import com.example.cleanarchitecture.domain.interactor.definition.TaskModel
 import com.example.cleanarchitecture.domain.model.Task
 import com.example.cleanarchitecture.domain.repository.TaskRepository
-import com.example.cleanarchitecture.scheduler.SchedulerProvider
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Single

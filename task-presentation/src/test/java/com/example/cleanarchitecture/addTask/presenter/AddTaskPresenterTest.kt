@@ -1,6 +1,7 @@
 package com.example.cleanarchitecture.addTask.presenter
 
-import com.example.cleanarchitecture.domain.interactor.definition.AddTaskModel
+import com.example.cleanarchitecture.domain.interactor.definition.GetStringResourceUseCase
+import com.example.cleanarchitecture.domain.interactor.definition.InsertTaskUseCase
 import com.example.cleanarchitecture.ui.addTask.AddTaskView
 import com.example.cleanarchitecture.scheduler.TestSchedulerProvider
 import com.example.cleanarchitecture.domain.model.Task
@@ -15,12 +16,14 @@ import org.spekframework.spek2.style.specification.describe
 
 class AddTaskPresenterTest : Spek({
     val schedulerProvider = TestSchedulerProvider
-    val model: AddTaskModel by memoized { mock<AddTaskModel>() }
+    val insertTaskUseCase: InsertTaskUseCase by memoized { mock<InsertTaskUseCase>() }
+    val getStringUseCase: GetStringResourceUseCase by memoized { mock<GetStringResourceUseCase>() }
     val view: AddTaskView by memoized { mock<AddTaskView>() }
 
     val presenter: AddTaskPresenter by memoized {
         AddTaskPresenter(
-            model,
+            insertTaskUseCase,
+            getStringUseCase,
             schedulerProvider
         )
     }
@@ -32,7 +35,7 @@ class AddTaskPresenterTest : Spek({
         context("when presenter inserts task") {
 
             beforeEachTest {
-                given(model.insertTask(task)).willReturn(Completable.complete())
+                given(insertTaskUseCase.execute(task)).willReturn(Completable.complete())
 
                 presenter.attachView(view)
                 presenter.insertTask(task)
@@ -45,7 +48,7 @@ class AddTaskPresenterTest : Spek({
 
         context("when error is returned") {
             beforeEachTest {
-                given(model.insertTask(task)).willReturn(Completable.error(error))
+                given(insertTaskUseCase.execute(task)).willReturn(Completable.error(error))
 
                 presenter.attachView(view)
                 presenter.insertTask(task)

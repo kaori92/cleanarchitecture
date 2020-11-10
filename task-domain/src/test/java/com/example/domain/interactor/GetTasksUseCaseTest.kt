@@ -1,8 +1,8 @@
 package com.example.domain.interactor
 
 import com.example.cleanarchitecture.connectivity.ConnectivityChecker
-import com.example.cleanarchitecture.domain.interactor.DefaultTaskModel
-import com.example.cleanarchitecture.domain.interactor.definition.TaskModel
+import com.example.cleanarchitecture.domain.interactor.GetTasksUseCaseImpl
+import com.example.cleanarchitecture.domain.interactor.definition.GetTasksUseCase
 import com.example.cleanarchitecture.domain.model.Task
 import com.example.cleanarchitecture.domain.repository.TaskRepository
 import com.nhaarman.mockitokotlin2.given
@@ -12,12 +12,12 @@ import io.reactivex.observers.TestObserver
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-class TaskModelTest : Spek({
+class GetTasksUseCaseTest : Spek({
     val taskRepository: TaskRepository by memoized { mock<TaskRepository>() }
     val connectivityChecker: ConnectivityChecker by memoized { mock<ConnectivityChecker>() }
 
-    val model: TaskModel by memoized {
-        DefaultTaskModel(
+    val model: GetTasksUseCase by memoized {
+        GetTasksUseCaseImpl(
             taskRepository,
             connectivityChecker
         )
@@ -36,7 +36,7 @@ class TaskModelTest : Spek({
                 given(connectivityChecker.isOnline()).willReturn(isOnline)
                 given(taskRepository.getAllTasks(isOnline)).willReturn(Single.just(tasks))
 
-                testObserver = model.getAllTasks().test()
+                testObserver = model.execute().test()
             }
 
 
@@ -54,7 +54,7 @@ class TaskModelTest : Spek({
                 given(connectivityChecker.isOnline()).willReturn(isOnline)
                 given(taskRepository.getAllTasks(isOnline)).willReturn(Single.error(error))
 
-                testObserver = model.getAllTasks().test()
+                testObserver = model.execute().test()
             }
 
             it("should return error") {

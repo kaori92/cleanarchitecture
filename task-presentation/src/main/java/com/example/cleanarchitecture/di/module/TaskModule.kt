@@ -2,8 +2,8 @@ package com.example.cleanarchitecture.di.module
 
 import com.example.cleanarchitecture.connectivity.ConnectivityChecker
 import com.example.cleanarchitecture.data.repository.TaskRepositoryImpl
-import com.example.cleanarchitecture.domain.interactor.DefaultTaskModel
-import com.example.cleanarchitecture.domain.interactor.definition.TaskModel
+import com.example.cleanarchitecture.domain.interactor.GetTasksUseCaseImpl
+import com.example.cleanarchitecture.domain.interactor.definition.GetTasksUseCase
 import com.example.cleanarchitecture.scheduler.AndroidSchedulerProvider
 import com.example.cleanarchitecture.ui.task.TaskListPresenter
 import dagger.Module
@@ -16,15 +16,15 @@ object TaskModule {
     internal fun provideModel(
         taskRepositoryImpl: TaskRepositoryImpl,
         connectivityChecker: ConnectivityChecker
-    ): TaskModel =
-        DefaultTaskModel(
+    ): GetTasksUseCase =
+        GetTasksUseCaseImpl(
             taskRepositoryImpl,
             connectivityChecker
         )
 
     @Provides
     fun providePresenter(
-        model: TaskModel
+        model: GetTasksUseCase
     ): TaskListPresenter =
         TaskListPresenter(
             model,

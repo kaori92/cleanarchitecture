@@ -3,8 +3,7 @@ package com.example.cleanarchitecture.domain.interactor.definition
 import com.example.cleanarchitecture.domain.model.Task
 import io.reactivex.Completable
 
-interface AddTaskModel {
+interface InsertTaskUseCase {
 
-    fun insertTask(task: Task): Completable
-    fun getStringResource(id: Int): String
+    fun execute(task: Task) : Completable
 }

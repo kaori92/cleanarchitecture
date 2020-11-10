@@ -5,7 +5,7 @@ import android.os.SystemClock
 private const val CACHE_LIMIT_MS = 60 * 1000
 
 class DefaultTimeService: TimeService {
-    private var cacheTimestampMs: Long = 0
+    private var cacheTimestampMs: Long = SystemClock.elapsedRealtime()
 
     override fun getTime() = SystemClock.elapsedRealtime()
     override fun getCacheLimitMs() = CACHE_LIMIT_MS

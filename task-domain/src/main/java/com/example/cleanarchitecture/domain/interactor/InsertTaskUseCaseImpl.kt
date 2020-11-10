@@ -1,23 +1,21 @@
 package com.example.cleanarchitecture.domain.interactor
 
 import com.example.cleanarchitecture.connectivity.ConnectivityChecker
-import com.example.cleanarchitecture.domain.interactor.definition.AddTaskModel
+import com.example.cleanarchitecture.domain.interactor.definition.InsertTaskUseCase
 import com.example.cleanarchitecture.domain.model.Task
 import com.example.cleanarchitecture.domain.repository.TaskRepository
-import com.example.cleanarchitecture.string.StringService
 import io.reactivex.Completable
 
-class DefaultAddTaskModel(
+class InsertTaskUseCaseImpl(
     private val taskRepository: TaskRepository,
-    private val stringService: StringService,
     private val connectivityChecker: ConnectivityChecker
-) : AddTaskModel {
+) : InsertTaskUseCase {
 
-    override fun insertTask(task: Task): Completable {
-        return taskRepository.insertTask(task, isOnline())
+    override fun execute(task: Task): Completable = try {
+        taskRepository.insertTask(task, isOnline())
+    } catch (exception: Exception) {
+        Completable.error(exception)
     }
-
-    override fun getStringResource(id: Int) = stringService.getStringResource(id)
 
     private fun isOnline() = connectivityChecker.isOnline()
 

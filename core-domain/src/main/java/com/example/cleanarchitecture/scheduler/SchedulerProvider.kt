@@ -19,8 +19,7 @@ object AndroidSchedulerProvider :
     }
 }
 
-object TestSchedulerProvider :
-    SchedulerProvider {
+object TestSchedulerProvider : SchedulerProvider {
     override fun main(): Scheduler {
         return Schedulers.trampoline()
     }

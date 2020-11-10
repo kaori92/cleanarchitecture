@@ -1,8 +1,8 @@
 package com.example.cleanarchitecture.task.presenter
 
-import com.example.cleanarchitecture.domain.interactor.definition.TaskModel
+import com.example.cleanarchitecture.domain.interactor.definition.GetTasksUseCase
 import com.example.cleanarchitecture.domain.model.Task
-import com.example.cleanarchitecture.scheduler.SchedulerProvider
+import com.example.cleanarchitecture.scheduler.TestSchedulerProvider
 import com.example.cleanarchitecture.ui.task.TaskListPresenter
 import com.example.cleanarchitecture.ui.task.TaskListView
 import com.nhaarman.mockitokotlin2.any
@@ -14,13 +14,13 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
 class TaskListPresenterTest : Spek({
-    val model: TaskModel by memoized { mock<TaskModel>() }
-    val schedulerProvider: SchedulerProvider by memoized { mock<SchedulerProvider>() }
+    val getTasksUseCase: GetTasksUseCase by memoized { mock<GetTasksUseCase>() }
+    val schedulerProvider = TestSchedulerProvider
     val view: TaskListView by memoized { mock<TaskListView>() }
 
     val presenter: TaskListPresenter by memoized {
         TaskListPresenter(
-            model,
+            getTasksUseCase,
             schedulerProvider
         )
     }
@@ -31,7 +31,7 @@ class TaskListPresenterTest : Spek({
 
         context("when presenter gets tasks") {
             beforeEachTest {
-                given(model.getAllTasks()).willReturn(Single.just(tasks))
+                given(getTasksUseCase.execute()).willReturn(Single.just(tasks))
 
                 presenter.attachView(view)
                 presenter.getAllTasks()
@@ -44,7 +44,7 @@ class TaskListPresenterTest : Spek({
 
         context("when error is returned") {
             beforeEachTest {
-                given(model.getAllTasks()).willReturn(Single.error(error))
+                given(getTasksUseCase.execute()).willReturn(Single.error(error))
 
                 presenter.attachView(view)
                 presenter.getAllTasks()

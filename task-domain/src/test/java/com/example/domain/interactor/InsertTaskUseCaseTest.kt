@@ -1,8 +1,8 @@
 package com.example.domain.interactor
 
 import com.example.cleanarchitecture.connectivity.ConnectivityChecker
-import com.example.cleanarchitecture.domain.interactor.DefaultAddTaskModel
-import com.example.cleanarchitecture.domain.interactor.definition.AddTaskModel
+import com.example.cleanarchitecture.domain.interactor.InsertTaskUseCaseImpl
+import com.example.cleanarchitecture.domain.interactor.definition.InsertTaskUseCase
 import com.example.cleanarchitecture.domain.model.Task
 import com.example.cleanarchitecture.domain.repository.TaskRepository
 import com.example.cleanarchitecture.string.StringService
@@ -13,15 +13,14 @@ import io.reactivex.observers.TestObserver
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-class AddTaskModelTest : Spek({
+class InsertTaskUseCaseTest : Spek({
     lateinit var testObserver: TestObserver<Void>
 
     val taskRepository: TaskRepository by memoized { mock<TaskRepository>() }
-    val stringService: StringService by memoized { mock<StringService>() }
     val connectivityChecker: ConnectivityChecker by memoized { mock<ConnectivityChecker>() }
 
-    val model: AddTaskModel by memoized {
-        DefaultAddTaskModel(taskRepository, stringService, connectivityChecker)
+    val useCase: InsertTaskUseCase by memoized {
+        InsertTaskUseCaseImpl(taskRepository, connectivityChecker)
     }
 
     val task = Task("abc")
@@ -34,7 +33,7 @@ class AddTaskModelTest : Spek({
                 given(connectivityChecker.isOnline()).willReturn(isOnline)
                 given(taskRepository.insertTask(task, isOnline)).willReturn(Completable.complete())
 
-                testObserver = model.insertTask(task).test()
+                testObserver = useCase.execute(task).test()
             }
 
             it("should completable be completed") {
@@ -48,7 +47,7 @@ class AddTaskModelTest : Spek({
                 given(connectivityChecker.isOnline()).willReturn(isOnline)
                 given(taskRepository.insertTask(task, isOnline)).willReturn(Completable.error(error))
 
-                testObserver = model.insertTask(task).test()
+                testObserver = useCase.execute(task).test()
             }
 
             it("should return error") {

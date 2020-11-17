@@ -1,11 +1,9 @@
-package com.example.domain.interactor
+package com.example.cleanarchitecture.domain.interactor
 
 import com.example.cleanarchitecture.connectivity.ConnectivityChecker
-import com.example.cleanarchitecture.domain.interactor.InsertTaskUseCaseImpl
 import com.example.cleanarchitecture.domain.interactor.definition.InsertTaskUseCase
 import com.example.cleanarchitecture.domain.model.Task
 import com.example.cleanarchitecture.domain.repository.TaskRepository
-import com.example.cleanarchitecture.string.StringService
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Completable

@@ -63,5 +63,14 @@ dependencies {
     implementation "androidx.room:room-rxjava2:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
 
+    implementation "com.github.moxy-community:moxy:2.0.2"
+    implementation "com.github.moxy-community:moxy-app-compat:2.0.2"
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
+    implementation 'org.conscrypt:conscrypt-android:2.2.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.android.material:material:1.2.0'
+
+    kapt 'com.google.dagger:dagger-compiler:2.27'
+    kapt "com.github.moxy-community:moxy-compiler:2.0.2"
 
 }

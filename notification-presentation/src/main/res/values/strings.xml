@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_added">Notification added</string>
+    <string name="channel_name">Default channel</string>
+    <string name="channel_description">Default</string>
+    <string name="add_notification">Add notification</string>
+    <string name="list_notifications">List notifications</string>
+</resources>

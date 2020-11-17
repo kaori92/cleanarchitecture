@@ -39,7 +39,7 @@ object AddTaskModule {
     @Provides
     fun providePresenter(
         insertTaskUseCase: InsertTaskUseCase,
-        getStringUseCase: GetStringResourceUseCase,
+        getStringUseCase: GetStringResourceUseCase
     ): AddTaskPresenter =
         AddTaskPresenter(
             insertTaskUseCase,

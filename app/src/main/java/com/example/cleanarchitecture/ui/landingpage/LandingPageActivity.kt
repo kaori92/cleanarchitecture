@@ -9,6 +9,8 @@ import com.example.cleanarchitecture.di.component.DaggerLandingPageComponent
 import com.example.cleanarchitecture.di.component.LandingPageComponent
 import com.example.cleanarchitecture.di.module.LandingPageModule
 import com.example.cleanarchitecture.ui.core.BaseActivity
+import com.example.cleanarchitecture.ui.notification.NotificationListActivity
+import com.example.cleanarchitecture.ui.task.TaskListActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
@@ -43,13 +45,13 @@ class LandingPageActivity : BaseActivity(), LandingPageView {
         notificationsButton = findViewById(R.id.notification_button)
 
         tasksButton.setOnClickListener {
-//            val intent = Intent(this, TaskListActivity::class.java)
-//            startActivity(intent)
+            val intent = Intent(this, TaskListActivity::class.java)
+            startActivity(intent)
         }
 
         notificationsButton.setOnClickListener {
-//            val intent = Intent(this, NotificationsListActivity::class.java)
-//            startActivity(intent)
+            val intent = Intent(this, NotificationListActivity::class.java)
+            startActivity(intent)
         }
     }
 }

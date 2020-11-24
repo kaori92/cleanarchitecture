@@ -1,7 +1,7 @@
 package com.example.cleanarchitecture.di.component
 
 import com.example.cleanarchitecture.connectivity.di.ConnectivityModule
-import com.example.cleanarchitecture.data.source.di.DataSourceModule
+import com.example.cleanarchitecture.data.source.di.NotificationDataSourceModule
 import com.example.cleanarchitecture.data.time.di.TimeServiceModule
 import com.example.cleanarchitecture.di.module.AddNotificationModule
 import com.example.cleanarchitecture.string.di.StringServiceModule
@@ -11,7 +11,7 @@ import dagger.Component
 @Component(
     modules = [
         AddNotificationModule::class,
-        DataSourceModule::class,
+        NotificationDataSourceModule::class,
         ConnectivityModule::class,
         TimeServiceModule::class,
         StringServiceModule::class

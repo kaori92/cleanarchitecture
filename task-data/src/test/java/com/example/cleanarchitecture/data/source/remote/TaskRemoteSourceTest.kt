@@ -25,7 +25,7 @@ class TaskRemoteSourceTest : Spek({
     }
 
     val taskRemoteSource by memoized {
-        TaskRemoteSource(taskRetrofitService, mapperApi)
+        DefaultTaskRemoteSource(taskRetrofitService, mapperApi)
     }
 
     val title = "abc"

@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
@@ -14,7 +14,6 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.cleanarchitecture"
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 1

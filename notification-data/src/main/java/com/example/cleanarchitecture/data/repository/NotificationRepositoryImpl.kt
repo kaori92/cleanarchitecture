@@ -2,8 +2,8 @@ package com.example.cleanarchitecture.data.repository
 
 import com.example.cleanarchitecture.data.exception.CachePassedException
 import com.example.cleanarchitecture.data.exception.NoInternetException
-import com.example.cleanarchitecture.data.source.LocalSource
-import com.example.cleanarchitecture.data.source.RemoteSource
+import com.example.cleanarchitecture.data.source.NotificationLocalSource
+import com.example.cleanarchitecture.data.source.NotificationRemoteSource
 import com.example.cleanarchitecture.data.time.TimeService
 import com.example.cleanarchitecture.domain.model.MyNotification
 import com.example.cleanarchitecture.domain.repository.NotificationRepository
@@ -15,8 +15,8 @@ import javax.inject.Inject
 class NotificationRepositoryImpl
 @Inject
 constructor(
-    private val remoteSource: RemoteSource,
-    private val localSource: LocalSource,
+    private val remoteSource: NotificationRemoteSource,
+    private val localSource: NotificationLocalSource,
     private val timeService: TimeService
 ) : NotificationRepository {
 

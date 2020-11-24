@@ -6,11 +6,11 @@ import com.example.cleanarchitecture.data.TASKS_API_URL
 import com.example.cleanarchitecture.data.TASK_DATABASE_NAME
 import com.example.cleanarchitecture.data.mapper.TaskApiDtoMapper
 import com.example.cleanarchitecture.data.mapper.TaskDbEntityMapper
-import com.example.cleanarchitecture.data.source.LocalSource
-import com.example.cleanarchitecture.data.source.RemoteSource
+import com.example.cleanarchitecture.data.source.TaskLocalSource
+import com.example.cleanarchitecture.data.source.TaskRemoteSource
 import com.example.cleanarchitecture.data.source.local.DefaultTaskDatabase
-import com.example.cleanarchitecture.data.source.local.TaskLocalSource
-import com.example.cleanarchitecture.data.source.remote.TaskRemoteSource
+import com.example.cleanarchitecture.data.source.local.DefaultTaskLocalSource
+import com.example.cleanarchitecture.data.source.remote.DefaultTaskRemoteSource
 import com.example.cleanarchitecture.data.source.remote.TaskRetrofitService
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -22,7 +22,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
-class DataSourceModule {
+class TaskDataSourceModule {
 
     @Provides
     fun provideDatabase(applicationContext: Context): DefaultTaskDatabase {
@@ -36,13 +36,13 @@ class DataSourceModule {
     fun provideLocalDataSource(
         database: DefaultTaskDatabase,
         mapper: TaskDbEntityMapper
-    ): LocalSource = TaskLocalSource(database.taskDao(), mapper)
+    ): TaskLocalSource = DefaultTaskLocalSource(database.taskDao(), mapper)
 
     @Provides
     fun provideRemoteDataSource(
         taskRetrofitService: TaskRetrofitService,
         mapperDb: TaskApiDtoMapper
-    ): RemoteSource = TaskRemoteSource(taskRetrofitService, mapperDb)
+    ): TaskRemoteSource = DefaultTaskRemoteSource(taskRetrofitService, mapperDb)
 
     @Provides
     fun provideTaskRetrofitService(): TaskRetrofitService {

@@ -2,8 +2,8 @@ package com.example.cleanarchitecture.data.repository
 
 import com.example.cleanarchitecture.data.exception.CachePassedException
 import com.example.cleanarchitecture.data.exception.NoInternetException
-import com.example.cleanarchitecture.data.source.LocalSource
-import com.example.cleanarchitecture.data.source.RemoteSource
+import com.example.cleanarchitecture.data.source.TaskLocalSource
+import com.example.cleanarchitecture.data.source.TaskRemoteSource
 import com.example.cleanarchitecture.data.time.TimeService
 import com.example.cleanarchitecture.domain.model.Task
 import com.example.cleanarchitecture.domain.repository.TaskRepository
@@ -15,8 +15,8 @@ import javax.inject.Inject
 class TaskRepositoryImpl
 @Inject
 constructor(
-    private val remoteSource: RemoteSource,
-    private val localSource: LocalSource,
+    private val remoteSource: TaskRemoteSource,
+    private val localSource: TaskLocalSource,
     private val timeService: TimeService
 ) : TaskRepository {
 

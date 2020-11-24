@@ -1,7 +1,7 @@
 package com.example.cleanarchitecture.data.source.local
 
 import com.example.cleanarchitecture.data.mapper.base.Mapper
-import com.example.cleanarchitecture.data.source.LocalSource
+import com.example.cleanarchitecture.data.source.TaskLocalSource
 import com.example.cleanarchitecture.data.source.local.dao.TaskDao
 import com.example.cleanarchitecture.data.source.local.model.TaskDbEntity
 import com.example.cleanarchitecture.domain.model.Task
@@ -27,8 +27,8 @@ class TaskLocalSourceTest : Spek({
         mock<Mapper<Task, TaskDbEntity>>()
     }
 
-    val taskLocalSource: LocalSource by memoized {
-        TaskLocalSource(taskDao, mapperDb)
+    val taskLocalSource: TaskLocalSource by memoized {
+        DefaultTaskLocalSource(taskDao, mapperDb)
     }
 
     lateinit var testObserver: TestObserver<Void>

@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.example.cleanarchitecture.ui.core.BaseActivity
 import com.example.cleanarchitecture.MyApplication
+import com.example.cleanarchitecture.ui.core.BaseActivity
 import com.example.cleanarchitecture.R
 import com.example.cleanarchitecture.di.module.AddTaskModule
 import com.example.cleanarchitecture.di.component.AddTaskComponent

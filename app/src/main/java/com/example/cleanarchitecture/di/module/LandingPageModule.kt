@@ -10,5 +10,6 @@ object LandingPageModule {
     @JvmStatic
     @Provides
     fun providePresenter(
-    ): LandingPagePresenter = LandingPagePresenter()
+    ): com.example.cleanarchitecture.ui.landingpage.LandingPagePresenter =
+        com.example.cleanarchitecture.ui.landingpage.LandingPagePresenter()
 }

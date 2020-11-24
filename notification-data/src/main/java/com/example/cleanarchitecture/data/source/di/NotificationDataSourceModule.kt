@@ -6,11 +6,11 @@ import com.example.cleanarchitecture.data.NOTIFICATIONS_API_URL
 import com.example.cleanarchitecture.data.NOTIFICATION_DATABASE_NAME
 import com.example.cleanarchitecture.data.mapper.NotificationApiDtoMapper
 import com.example.cleanarchitecture.data.mapper.NotificationDbEntityMapper
-import com.example.cleanarchitecture.data.source.LocalSource
-import com.example.cleanarchitecture.data.source.RemoteSource
+import com.example.cleanarchitecture.data.source.NotificationLocalSource
+import com.example.cleanarchitecture.data.source.NotificationRemoteSource
 import com.example.cleanarchitecture.data.source.local.DefaultNotificationDatabase
-import com.example.cleanarchitecture.data.source.local.NotificationLocalSource
-import com.example.cleanarchitecture.data.source.remote.NotificationRemoteSource
+import com.example.cleanarchitecture.data.source.local.DefaultNotificationLocalSource
+import com.example.cleanarchitecture.data.source.remote.DefaultNotificationRemoteSource
 import com.example.cleanarchitecture.data.source.remote.NotificationRetrofitService
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -22,7 +22,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
-class DataSourceModule {
+class NotificationDataSourceModule {
 
     @Provides
     fun provideDatabase(applicationContext: Context): DefaultNotificationDatabase {
@@ -36,13 +36,13 @@ class DataSourceModule {
     fun provideLocalDataSource(
         database: DefaultNotificationDatabase,
         mapper: NotificationDbEntityMapper
-    ): LocalSource = NotificationLocalSource(database.notificationDao(), mapper)
+    ): NotificationLocalSource = DefaultNotificationLocalSource(database.notificationDao(), mapper)
 
     @Provides
     fun provideRemoteDataSource(
         notificationRetrofitService: NotificationRetrofitService,
         mapperDb: NotificationApiDtoMapper
-    ): RemoteSource = NotificationRemoteSource(notificationRetrofitService, mapperDb)
+    ): NotificationRemoteSource = DefaultNotificationRemoteSource(notificationRetrofitService, mapperDb)
 
     @Provides
     fun provideNotificationRetrofitService(): NotificationRetrofitService {

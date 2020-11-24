@@ -4,6 +4,4 @@ import com.example.cleanarchitecture.ui.core.BaseView
 import moxy.viewstate.strategy.AddToEndStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
-interface LandingPageView : BaseView {
-
-}
+interface LandingPageView : BaseView

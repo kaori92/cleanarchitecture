@@ -2,8 +2,8 @@ package com.example.cleanarchitecture.data.repository
 
 import com.example.cleanarchitecture.data.exception.CachePassedException
 import com.example.cleanarchitecture.data.exception.NoInternetException
-import com.example.cleanarchitecture.data.source.LocalSource
-import com.example.cleanarchitecture.data.source.RemoteSource
+import com.example.cleanarchitecture.data.source.TaskLocalSource
+import com.example.cleanarchitecture.data.source.TaskRemoteSource
 import com.example.cleanarchitecture.data.time.TimeService
 import com.example.cleanarchitecture.domain.model.Task
 import com.nhaarman.mockitokotlin2.given
@@ -18,8 +18,8 @@ import kotlin.test.assertFailsWith
 
 class TaskRepositoryImplTest : Spek({
 
-    val remoteSource by memoized { mock<RemoteSource>() }
-    val localSource by memoized { mock<LocalSource>() }
+    val remoteSource by memoized { mock<TaskRemoteSource>() }
+    val localSource by memoized { mock<TaskLocalSource>() }
     val timeService by memoized { mock<TimeService>() }
 
     val taskRepository by memoized {

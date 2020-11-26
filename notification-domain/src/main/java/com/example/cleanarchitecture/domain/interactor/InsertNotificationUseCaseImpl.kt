@@ -11,11 +11,7 @@ class InsertNotificationUseCaseImpl(
     private val connectivityChecker: ConnectivityChecker
 ) : InsertNotificationUseCase {
 
-    override fun execute(notification: MyNotification): Completable = try {
-        notificationRepository.insertNotification(notification, isOnline())
-    } catch (exception: Exception) {
-        Completable.error(exception)
-    }
+    override fun execute(notification: MyNotification) = notificationRepository.insertNotification(notification, isOnline())
 
     private fun isOnline() = connectivityChecker.isOnline()
 

@@ -42,6 +42,7 @@ dependencies {
     implementation project(':task-data')
     implementation project(':task-domain')
     implementation project(':core-presentation')
+    implementation project(':core-android')
     implementation project(':core-data')
     implementation project(':core-domain')
 

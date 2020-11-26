@@ -9,7 +9,6 @@ import android.widget.ProgressBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cleanarchitecture.R
 import com.example.cleanarchitecture.ui.core.BaseActivity
-import com.example.cleanarchitecture.MyApplication
 import com.example.cleanarchitecture.di.component.NotificationComponent
 import com.example.cleanarchitecture.di.component.DaggerNotificationComponent
 import com.example.cleanarchitecture.di.module.NotificationModule
@@ -20,10 +19,6 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
 class NotificationListActivity : BaseActivity(), NotificationListView {
-
-    private val appComponent by lazy {
-        (applicationContext as MyApplication).appComponent
-    }
 
     private val notificationComponent: NotificationComponent by lazy {
         DaggerNotificationComponent

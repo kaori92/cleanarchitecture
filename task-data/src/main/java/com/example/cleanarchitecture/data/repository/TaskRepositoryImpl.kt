@@ -22,8 +22,9 @@ constructor(
 
     override fun insertTask(task: Task, isOnline: Boolean): Completable {
         return if (isOnline) {
-            remoteSource.insertTask(task)
-            localSource.insertTask(task)
+            remoteSource
+                .insertTask(task)
+                .andThen(localSource.insertTask(task))
         } else {
             throw NoInternetException("No internet - failed to insert task")
         }
@@ -31,13 +32,15 @@ constructor(
 
     override fun getAllTasks(isOnline: Boolean): Single<List<Task>> {
         return if (isOnline) {
-            timeService.setCacheTimestampMs(timeService.getTime())
-            remoteSource.getAllTasks()
+            remoteSource
+                .getAllTasks()
+                .doOnSuccess {
+                    timeService.updateCacheTimestampMs()
+                }
         } else {
-            if (timeService.getTime() - timeService.getCacheTimestampMs() > timeService.getCacheLimitMs()) {
+            if (timeService.getTime() - timeService.cacheTimestampMs > timeService.getCacheLimitMs()) {
                 throw CachePassedException("Cache limit passed")
             } else {
-                timeService.setCacheTimestampMs(timeService.getTime())
                 localSource.getAllTasks()
             }
         }

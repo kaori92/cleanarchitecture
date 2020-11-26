@@ -17,7 +17,9 @@ constructor(
 
     // will only show toast with message "Task added" because the mock API does not allow creating tasks
     override fun insertTask(task: Task): Completable {
-        return taskRetrofitService.insertTask(mapperApi.reverse(Task(task.title)))
+        return taskRetrofitService.insertTask(
+            mapperApi.reverse(task)
+        )
     }
 
     override fun getAllTasks(): Single<List<Task>> {

@@ -3,7 +3,6 @@ package com.example.cleanarchitecture.ui.landingpage
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import com.example.cleanarchitecture.MyApplication
 import com.example.cleanarchitecture.R
 import com.example.cleanarchitecture.di.component.DaggerLandingPageComponent
 import com.example.cleanarchitecture.di.component.LandingPageComponent
@@ -18,10 +17,6 @@ class LandingPageActivity : BaseActivity(), LandingPageView {
 
     private lateinit var tasksButton: Button
     private lateinit var notificationsButton: Button
-
-    private val appComponent by lazy {
-        (applicationContext as MyApplication).appComponent
-    }
 
     private val component: LandingPageComponent by lazy {
         DaggerLandingPageComponent

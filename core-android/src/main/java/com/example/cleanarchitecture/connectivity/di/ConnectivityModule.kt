@@ -10,5 +10,6 @@ import dagger.Provides
 class ConnectivityModule {
 
     @Provides
-    fun provideConnectivityChecker(context: Context): ConnectivityChecker = DefaultConnectivityChecker(context)
+    fun provideConnectivityChecker(context: Context): ConnectivityChecker =
+        DefaultConnectivityChecker(context)
 }

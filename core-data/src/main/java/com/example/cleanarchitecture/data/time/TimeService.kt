@@ -1,8 +1,9 @@
 package com.example.cleanarchitecture.data.time
 
 interface TimeService {
+    var cacheTimestampMs: Long
+
     fun getTime(): Long
     fun getCacheLimitMs(): Int
-    fun getCacheTimestampMs(): Long
-    fun setCacheTimestampMs(limitMs: Long)
+    fun updateCacheTimestampMs()
 }

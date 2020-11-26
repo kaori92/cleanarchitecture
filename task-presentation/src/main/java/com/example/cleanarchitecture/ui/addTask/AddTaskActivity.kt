@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.example.cleanarchitecture.MyApplication
 import com.example.cleanarchitecture.ui.core.BaseActivity
 import com.example.cleanarchitecture.R
 import com.example.cleanarchitecture.di.module.AddTaskModule
@@ -19,10 +18,6 @@ import moxy.presenter.ProvidePresenter
 
 class AddTaskActivity : BaseActivity(),
     AddTaskView {
-
-    private val appComponent by lazy {
-        (applicationContext as MyApplication).appComponent
-    }
 
     private val component: AddTaskComponent by lazy {
         DaggerAddTaskComponent
@@ -38,9 +33,6 @@ class AddTaskActivity : BaseActivity(),
     @InjectPresenter
     lateinit var presenter: AddTaskPresenter
 
-    private lateinit var editText: EditText
-    private lateinit var submitButton: Button
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_task)
@@ -51,8 +43,8 @@ class AddTaskActivity : BaseActivity(),
     private fun setupViews() {
         setSupportActionBar(findViewById(R.id.my_toolbar))
 
-        editText = findViewById(R.id.edit_text)
-        submitButton = findViewById(R.id.submit_button)
+        val editText: EditText = findViewById(R.id.edit_text)
+        val submitButton: Button = findViewById(R.id.submit_button)
 
         submitButton.setOnClickListener {
             presenter.insertTask(

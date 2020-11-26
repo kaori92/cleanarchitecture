@@ -1,3 +1,4 @@
+include ':core-android'
 include ':app'
 include ':notification-presentation'
 include ':notification-domain'

@@ -7,7 +7,3 @@ class DefaultStringService(private val context: Context) : StringService {
         return context.getString(id)
     }
 }
-
-interface StringService {
-    fun getStringResource(id: Int): String
-}

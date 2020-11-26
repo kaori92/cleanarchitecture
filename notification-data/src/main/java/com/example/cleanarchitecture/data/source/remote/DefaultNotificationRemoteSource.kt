@@ -17,7 +17,9 @@ constructor(
 
     // will only show toast with message "Notification added" because the mock API does not allow creating notifications
     override fun insertNotification(notification: MyNotification): Completable {
-        return notificationRetrofitService.insertNotification(mapperApi.reverse(MyNotification(notification.title)))
+        return notificationRetrofitService.insertNotification(
+            mapperApi.reverse(notification)
+        )
     }
 
     override fun getAllNotifications(): Single<List<MyNotification>> {

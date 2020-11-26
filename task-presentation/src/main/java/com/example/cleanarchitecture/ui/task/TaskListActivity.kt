@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cleanarchitecture.R
 import com.example.cleanarchitecture.ui.addTask.AddTaskActivity
 import com.example.cleanarchitecture.ui.core.BaseActivity
-import com.example.cleanarchitecture.MyApplication
 import com.example.cleanarchitecture.di.component.TaskComponent
 import com.example.cleanarchitecture.di.component.DaggerTaskComponent
 import com.example.cleanarchitecture.di.module.TaskModule
@@ -20,10 +19,6 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
 class TaskListActivity : BaseActivity(), TaskListView {
-
-    private val appComponent by lazy {
-        (applicationContext as MyApplication).appComponent
-    }
 
     private val taskComponent: TaskComponent by lazy {
         DaggerTaskComponent

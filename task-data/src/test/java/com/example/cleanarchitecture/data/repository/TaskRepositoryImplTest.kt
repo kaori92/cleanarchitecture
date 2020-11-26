@@ -35,6 +35,7 @@ class TaskRepositoryImplTest : Spek({
 
         context("when online") {
             beforeEachTest {
+                given(remoteSource.insertTask(task)).willReturn(Completable.complete())
                 given(localSource.insertTask(task)).willReturn(Completable.complete())
 
                 testObserver = taskRepository.insertTask(task, true).test()
@@ -42,14 +43,6 @@ class TaskRepositoryImplTest : Spek({
 
             it("should completable be completed") {
                 testObserver.assertComplete()
-            }
-
-            it("should remoteSource call insertTask") {
-                verify(remoteSource).insertTask(task)
-            }
-
-            it("should localSource call insertTask") {
-                verify(localSource).insertTask(task)
             }
         }
 
@@ -83,7 +76,7 @@ class TaskRepositoryImplTest : Spek({
             context("and cache limit passed") {
                 beforeEachTest {
                     given(timeService.getTime()).willReturn(5000)
-                    given(timeService.getCacheTimestampMs()).willReturn(2000)
+                    given(timeService.cacheTimestampMs).willReturn(2000)
                     given(timeService.getCacheLimitMs()).willReturn(1000)
                 }
 
@@ -98,7 +91,7 @@ class TaskRepositoryImplTest : Spek({
 
                 beforeEachTest {
                     given(timeService.getTime()).willReturn(2000)
-                    given(timeService.getCacheTimestampMs()).willReturn(5000)
+                    given(timeService.cacheTimestampMs).willReturn(5000)
                     given(timeService.getCacheLimitMs()).willReturn(1000)
 
                     given(localSource.getAllTasks()).willReturn(Single.just(tasks))

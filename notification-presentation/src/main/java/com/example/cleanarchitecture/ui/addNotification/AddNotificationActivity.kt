@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.cleanarchitecture.ui.core.BaseActivity
-import com.example.cleanarchitecture.MyApplication
 import com.example.cleanarchitecture.R
 import com.example.cleanarchitecture.data.CHANNEL_ID
 import com.example.cleanarchitecture.data.NOTIFICATION_ID
@@ -28,10 +27,6 @@ import moxy.presenter.ProvidePresenter
 
 class AddNotificationActivity : BaseActivity(),
     AddNotificationView {
-
-    private val appComponent by lazy {
-        (applicationContext as MyApplication).appComponent
-    }
 
     private val component: AddNotificationComponent by lazy {
         DaggerAddNotificationComponent

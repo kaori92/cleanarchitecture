@@ -19,11 +19,12 @@ constructor(
     private val localSource: NotificationLocalSource,
     private val timeService: TimeService
 ) : NotificationRepository {
-
     override fun insertNotification(notification: MyNotification, isOnline: Boolean): Completable {
         return if (isOnline) {
-            remoteSource.insertNotification(notification)
-            localSource.insertNotification(notification)
+            remoteSource
+                .insertNotification(notification)
+                .andThen(localSource.insertNotification(notification))
+
         } else {
             throw NoInternetException("No internet - failed to insert notification")
         }
@@ -31,13 +32,15 @@ constructor(
 
     override fun getAllNotifications(isOnline: Boolean): Single<List<MyNotification>> {
         return if (isOnline) {
-            timeService.setCacheTimestampMs(timeService.getTime())
-            remoteSource.getAllNotifications()
+            remoteSource
+                .getAllNotifications()
+                .doOnSuccess {
+                    timeService.updateCacheTimestampMs()
+                }
         } else {
-            if (timeService.getTime() - timeService.getCacheTimestampMs() > timeService.getCacheLimitMs()) {
+            if (timeService.getTime() - timeService.cacheTimestampMs > timeService.getCacheLimitMs()) {
                 throw CachePassedException("Cache limit passed")
             } else {
-                timeService.setCacheTimestampMs(timeService.getTime())
                 localSource.getAllNotifications()
             }
         }

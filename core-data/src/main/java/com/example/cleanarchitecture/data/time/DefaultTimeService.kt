@@ -13,4 +13,6 @@ class DefaultTimeService: TimeService {
     override fun updateCacheTimestampMs() {
         cacheTimestampMs = getTime()
     }
+
+    override fun isTimeoutExceeded() = getTime() - cacheTimestampMs > getCacheLimitMs()
 }

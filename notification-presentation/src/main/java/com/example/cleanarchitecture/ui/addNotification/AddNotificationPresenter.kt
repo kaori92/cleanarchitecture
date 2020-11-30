@@ -1,12 +1,9 @@
 package com.example.cleanarchitecture.ui.addNotification
 
-import android.util.Log
-import androidx.core.app.NotificationCompat
 import com.example.cleanarchitecture.R
 import com.example.cleanarchitecture.domain.interactor.definition.InsertNotificationUseCase
 import com.example.cleanarchitecture.ui.core.BasePresenter
 import com.example.cleanarchitecture.scheduler.SchedulerProvider
-import com.example.cleanarchitecture.TAG
 import com.example.cleanarchitecture.domain.interactor.definition.GetStringResourceUseCase
 import com.example.cleanarchitecture.domain.model.MyNotification
 import moxy.InjectViewState
@@ -33,7 +30,6 @@ class AddNotificationPresenter(
                 viewState.openNotificationList()
             }, {
                 viewState.showError(it)
-                Log.e(TAG, "$it ${it.message} ${it.stackTrace}")
             })
 
         compositeDisposable.add(disposable)

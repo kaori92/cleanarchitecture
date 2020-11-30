@@ -10,8 +10,10 @@ import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.reactivex.Single
+import io.reactivex.subjects.PublishSubject
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+
 
 class TaskListPresenterTest : Spek({
     val getTasksUseCase: GetTasksUseCase by memoized { mock<GetTasksUseCase>() }
@@ -40,6 +42,10 @@ class TaskListPresenterTest : Spek({
             it("should call view setUpRecyclerView") {
                 verify(view).setUpRecyclerView(tasks.toTypedArray())
             }
+
+            it("should call showLoader") {
+                verify(view).showLoader()
+            }
         }
 
         context("when error is returned") {
@@ -52,6 +58,35 @@ class TaskListPresenterTest : Spek({
 
             it("should show error") {
                 verify(view).showError(any())
+            }
+        }
+
+        context("when subscribed") {
+            beforeEachTest {
+                val delayer: PublishSubject<Boolean> = PublishSubject.create()
+                given(getTasksUseCase.execute()).willReturn(Single.just(tasks).delaySubscription(delayer))
+
+                presenter.attachView(view)
+                presenter.getAllTasks()
+            }
+
+            it("should call showLoader") {
+                verify(view).showLoader()
+            }
+        }
+
+        context("finally") {
+            beforeEachTest {
+                val delayer: PublishSubject<Boolean> = PublishSubject.create()
+                given(getTasksUseCase.execute()).willReturn(Single.just(tasks).delaySubscription(delayer))
+                delayer.onComplete()
+
+                presenter.attachView(view)
+                presenter.getAllTasks()
+            }
+
+            it("should call showLoader") {
+                verify(view).hideLoader()
             }
         }
     }

@@ -30,11 +30,12 @@ class AddTaskPresenterTest : Spek({
 
     val task = Task("xyz")
     val error = Throwable("error")
+    val message = "task added"
 
     describe("inserting tasks") {
         context("when presenter inserts task") {
-
             beforeEachTest {
+                given(getStringUseCase.execute(any())).willReturn(message)
                 given(insertTaskUseCase.execute(task)).willReturn(Completable.complete())
 
                 presenter.attachView(view)
@@ -43,6 +44,10 @@ class AddTaskPresenterTest : Spek({
 
             it("should call view openTaskList") {
                 verify(view).openTaskList()
+            }
+
+            it("should call view showToast") {
+                verify(view).showToast(message)
             }
         }
 

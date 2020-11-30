@@ -7,6 +7,7 @@ import com.example.cleanarchitecture.data.source.local.model.TaskDbEntity
 import com.example.cleanarchitecture.domain.model.Task
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
@@ -36,6 +37,28 @@ class TaskLocalSourceTest : Spek({
     val error = Throwable("error")
 
     describe("inserting task") {
+        context("when inserting task"){
+            beforeEachTest {
+                given(mapperDb.reverse(task)).willReturn(taskDbEntity)
+
+                taskLocalSource.insertTask(task)
+            }
+
+            it("should taskDao be called with insertTask") {
+                verify(taskDao).insertTask(taskDbEntity)
+            }
+        }
+
+        context("when inserting task"){
+            beforeEachTest {
+                taskLocalSource.insertTask(task)
+            }
+
+            it("should mapperDb be called with reverse") {
+                verify(mapperDb).reverse(task)
+            }
+        }
+
         context("when inserting task succeeds"){
 
             beforeEachTest {
@@ -52,20 +75,41 @@ class TaskLocalSourceTest : Spek({
 
         context("when inserting task fails"){
 
-            beforeEachTest {
-                given(taskDao.insertTask(taskDbEntity)).willReturn(Completable.error(error))
-                given(mapperDb.reverse(task)).willReturn(taskDbEntity)
+                beforeEachTest {
+                    given(taskDao.insertTask(taskDbEntity)).willReturn(Completable.error(error))
+                    given(mapperDb.reverse(task)).willReturn(taskDbEntity)
 
-                testObserver = taskLocalSource.insertTask(task).test()
-            }
+                    testObserver = taskLocalSource.insertTask(task).test()
+                }
 
-            it("should return error") {
-                testObserver.assertError(error)
+                it("should return error") {
+                    testObserver.assertError(error)
+                }
             }
-        }
     }
 
     describe("getting all tasks") {
+        context("getting all tasks"){
+            beforeEachTest {
+                taskLocalSource.getAllTasks()
+            }
+
+            it("should taskDao be called with getAllTasks") {
+                verify(taskDao).getAllTasks()
+            }
+        }
+
+        context("getting all tasks"){
+            beforeEachTest {
+                given(taskDao.getAllTasks()).willReturn(Single.just(taskDbEntities))
+                taskLocalSource.getAllTasks()
+            }
+// TODO fix
+            it("should mapperDb be called with map") {
+                verify(mapperDb).map(taskDbEntities)
+            }
+        }
+
         context("when getting all tasks succeeds"){
 
             beforeEachTest {

@@ -38,7 +38,7 @@ constructor(
                     timeService.updateCacheTimestampMs()
                 }
         } else {
-            if (timeService.getTime() - timeService.cacheTimestampMs > timeService.getCacheLimitMs()) {
+            if(timeService.isTimeoutExceeded()){
                 throw CachePassedException("Cache limit passed")
             } else {
                 localSource.getAllTasks()

@@ -6,4 +6,5 @@ interface TimeService {
     fun getTime(): Long
     fun getCacheLimitMs(): Int
     fun updateCacheTimestampMs()
+    fun isTimeoutExceeded(): Boolean
 }

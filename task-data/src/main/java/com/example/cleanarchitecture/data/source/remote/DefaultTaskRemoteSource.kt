@@ -23,8 +23,8 @@ constructor(
     }
 
     override fun getAllTasks(): Single<List<Task>> {
-        return taskRetrofitService.getTasks().map {
+        return taskRetrofitService.getTasks()?.map {
             mapperApi.map(it)
-        }
+        } ?: Single.just(listOf())
     }
 }

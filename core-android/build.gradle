@@ -31,6 +31,21 @@ android {
     }
 }
 
+kotlin {
+    sourceSets {
+        commonTest {
+            dependencies {
+                implementation kotlin('test-junit')
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-test-junit"
+            }
+        }
+    }
+}
 
 def daggerVersion = '2.27'
 
@@ -57,5 +72,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    testImplementation group: 'org.spekframework.spek2', name: 'spek-dsl-jvm', version: '2.0.9'
+    testImplementation group: 'org.spekframework.spek2', name: 'spek-runner-junit5', version: '2.0.9'
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+
 }

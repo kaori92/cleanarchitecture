@@ -28,7 +28,7 @@ class TaskRepositoryImplTest : Spek({
 
     val task = Task("abc")
     val tasks = listOf(Task("abc"))
-    lateinit var testObserver: TestObserver<Void>
+
     lateinit var testObserverList: TestObserver<List<Task>>
 
     describe("inserting task") {
@@ -38,11 +38,14 @@ class TaskRepositoryImplTest : Spek({
                 given(remoteSource.insertTask(task)).willReturn(Completable.complete())
                 given(localSource.insertTask(task)).willReturn(Completable.complete())
 
-                testObserver = taskRepository.insertTask(task, true).test()
+                taskRepository.insertTask(task, true)
             }
 
-            it("should completable be completed") {
-                testObserver.assertComplete()
+            it("should remoteSource call insertTask and then localSource also should call insertTask"){
+                remoteSource.insertTask(task)
+                    .andThen(localSource.insertTask(task))
+                    .test()
+                    .assertComplete()
             }
         }
 
@@ -70,14 +73,16 @@ class TaskRepositoryImplTest : Spek({
             it("should remoteSource call getAllTasks") {
                 verify(remoteSource).getAllTasks()
             }
+
+            it("should timeService call updateCacheTimestampMs") {
+                verify(timeService).updateCacheTimestampMs()
+            }
         }
 
         context("when offline") {
             context("and cache limit passed") {
                 beforeEachTest {
-                    given(timeService.getTime()).willReturn(5000)
-                    given(timeService.cacheTimestampMs).willReturn(2000)
-                    given(timeService.getCacheLimitMs()).willReturn(1000)
+                    given(timeService.isTimeoutExceeded()).willReturn(true)
                 }
 
                 it("should return error") {
@@ -90,10 +95,7 @@ class TaskRepositoryImplTest : Spek({
             context("and cache limit NOT passed") {
 
                 beforeEachTest {
-                    given(timeService.getTime()).willReturn(2000)
-                    given(timeService.cacheTimestampMs).willReturn(5000)
-                    given(timeService.getCacheLimitMs()).willReturn(1000)
-
+                    given(timeService.isTimeoutExceeded()).willReturn(false)
                     given(localSource.getAllTasks()).willReturn(Single.just(tasks))
                     testObserverList = taskRepository.getAllTasks(false).test()
                 }

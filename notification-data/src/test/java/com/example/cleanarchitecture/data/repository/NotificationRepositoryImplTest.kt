@@ -41,11 +41,12 @@ class NotificationRepositoryImplTest : Spek({
                 notificationRepository.insertNotification(notification, true)
             }
 
-            it("should remoteSource call insertNotification and then localSource also should call insertNotification"){
-                remoteSource.insertNotification(notification)
-                    .andThen(localSource.insertNotification(notification))
-                    .test()
-                    .assertComplete()
+            it("should call local source") {
+                verify(localSource).insertNotification(notification)
+            }
+
+            it("should call remote source") {
+                verify(remoteSource).insertNotification(notification)
             }
         }
 

@@ -11,7 +11,7 @@ import retrofit2.http.POST
 interface TaskRetrofitService {
 
     @GET(TODOS_FIELD_NAME)
-    fun getTasks(): Single<List<TaskApiDto>>?
+    fun getTasks(): Single<List<TaskApiDto>>
 
     @POST(TODOS_FIELD_NAME)
     fun insertTask(@Body taskRequest: TaskApiDto): Completable

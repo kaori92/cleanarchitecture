@@ -38,7 +38,7 @@ class NotificationRemoteSourceTest : Spek({
     val notificationListSingle = Single.just(notificationApiDtos)
 
     describe("inserting notification") {
-        context("when inserting notification"){
+        context("when calling insert notification"){
             beforeEachTest {
                 given(mapperApi.reverse(notification)).willReturn(notificationApiDto)
 
@@ -47,12 +47,6 @@ class NotificationRemoteSourceTest : Spek({
 
             it("should notificationRetrofitService be called with insertNotification") {
                 verify(notificationRetrofitService).insertNotification(notificationApiDto)
-            }
-        }
-
-        context("when inserting notification"){
-            beforeEachTest {
-                notificationRemoteSource.insertNotification(notification)
             }
 
             it("should mapperApi be called with reverse") {
@@ -92,10 +86,10 @@ class NotificationRemoteSourceTest : Spek({
 
         context("getting all notifications"){
             beforeEachTest {
+                given(notificationRetrofitService.getNotifications()).willReturn(notificationListSingle)
                 notificationRemoteSource.getAllNotifications()
             }
 
-            //TODO: fix
             it("should notificationRetrofitService be called with getNotifications") {
                 verify(notificationRetrofitService).getNotifications()
             }

@@ -38,7 +38,7 @@ class TaskRemoteSourceTest : Spek({
     val taskListSingle = Single.just(taskApiDtos)
 
     describe("inserting task") {
-        context("when inserting task"){
+        context("when calling insert task"){
             beforeEachTest {
                 given(mapperApi.reverse(task)).willReturn(taskApiDto)
 
@@ -48,12 +48,7 @@ class TaskRemoteSourceTest : Spek({
             it("should taskRetrofitService be called with insertTask") {
                 verify(taskRetrofitService).insertTask(taskApiDto)
             }
-        }
 
-        context("when inserting task"){
-            beforeEachTest {
-                taskRemoteSource.insertTask(task)
-            }
 
             it("should mapperApi be called with reverse") {
                 verify(mapperApi).reverse(task)
@@ -90,21 +85,14 @@ class TaskRemoteSourceTest : Spek({
 
     describe("getting tasks") {
 
-        context("getting all tasks"){
+        context("calling get all tasks"){
             beforeEachTest {
+                given(taskRetrofitService.getTasks()).willReturn(taskListSingle)
                 taskRemoteSource.getAllTasks()
             }
 
             it("should taskRetrofitService be called with getTasks") {
                 verify(taskRetrofitService).getTasks()
-            }
-        }
-
-        context("getting all tasks"){
-            beforeEachTest {
-                given(taskRetrofitService.getTasks()).willReturn(taskListSingle)
-
-                taskRemoteSource.getAllTasks()
             }
 
             //TODO: fix

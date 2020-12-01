@@ -41,11 +41,12 @@ class TaskRepositoryImplTest : Spek({
                 taskRepository.insertTask(task, true)
             }
 
-            it("should remoteSource call insertTask and then localSource also should call insertTask"){
-                remoteSource.insertTask(task)
-                    .andThen(localSource.insertTask(task))
-                    .test()
-                    .assertComplete()
+            it("should call local source") {
+                verify(localSource).insertTask(task)
+            }
+
+            it("should call remote source") {
+                verify(remoteSource).insertTask(task)
             }
         }
 

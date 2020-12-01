@@ -20,6 +20,7 @@ class NotificationLocalSourceTest : Spek({
     val notificationDbEntity = NotificationDbEntity(title)
     val notifications = listOf(notification)
     val notificationDbEntities = listOf(notificationDbEntity)
+    val notificationDbEntitiesSingle = Single.just(notificationDbEntities)
 
     val notificationDao: NotificationDao by memoized {
         mock<NotificationDao>()
@@ -37,7 +38,7 @@ class NotificationLocalSourceTest : Spek({
     val error = Throwable("error")
 
     describe("inserting notification") {
-        context("when inserting notification"){
+        context("when calling insert notification") {
             beforeEachTest {
                 given(mapperDb.reverse(notification)).willReturn(notificationDbEntity)
 
@@ -47,22 +48,18 @@ class NotificationLocalSourceTest : Spek({
             it("should notificationDao be called with insertNotification") {
                 verify(notificationDao).insertNotification(notificationDbEntity)
             }
-        }
-
-        context("when inserting notification"){
-            beforeEachTest {
-                notificationLocalSource.insertNotification(notification)
-            }
 
             it("should mapperDb be called with reverse") {
                 verify(mapperDb).reverse(notification)
             }
         }
 
-        context("when inserting notification succeeds"){
+        context("when inserting notification succeeds") {
 
             beforeEachTest {
-                given(notificationDao.insertNotification(notificationDbEntity)).willReturn(Completable.complete())
+                given(notificationDao.insertNotification(notificationDbEntity)).willReturn(
+                    Completable.complete()
+                )
                 given(mapperDb.reverse(notification)).willReturn(notificationDbEntity)
 
                 testObserver = notificationLocalSource.insertNotification(notification).test()
@@ -73,25 +70,33 @@ class NotificationLocalSourceTest : Spek({
             }
         }
 
-        context("when inserting notification fails"){
+        context("when inserting notification fails") {
 
-                beforeEachTest {
-                    given(notificationDao.insertNotification(notificationDbEntity)).willReturn(Completable.error(error))
-                    given(mapperDb.reverse(notification)).willReturn(notificationDbEntity)
+            beforeEachTest {
+                given(notificationDao.insertNotification(notificationDbEntity)).willReturn(
+                    Completable.error(error)
+                )
+                given(mapperDb.reverse(notification)).willReturn(notificationDbEntity)
 
-                    testObserver = notificationLocalSource.insertNotification(notification).test()
-                }
-
-                it("should return error") {
-                    testObserver.assertError(error)
-                }
+                testObserver = notificationLocalSource.insertNotification(notification).test()
             }
+
+            it("should return error") {
+                testObserver.assertError(error)
+            }
+        }
     }
 
     describe("getting all notifications") {
-        context("getting all notifications"){
+        context("calling get all notifications") {
             beforeEachTest {
+                given(notificationDao.getAllNotifications()).willReturn(notificationDbEntitiesSingle)
+
                 notificationLocalSource.getAllNotifications()
+            }
+            // TODO fix
+            it("should mapperDb be called with map") {
+                verify(mapperDb).map(notificationDbEntities)
             }
 
             it("should notificationDao be called with getAllNotifications") {
@@ -99,22 +104,12 @@ class NotificationLocalSourceTest : Spek({
             }
         }
 
-        context("getting all notifications"){
-            beforeEachTest {
-                given(notificationDao.getAllNotifications()).willReturn(Single.just(notificationDbEntities))
-
-                notificationLocalSource.getAllNotifications()
-            }
-    // TODO fix
-            it("should mapperDb be called with map") {
-                verify(mapperDb).map(notificationDbEntities)
-            }
-        }
-
-        context("when getting all notifications succeeds"){
+        context("when getting all notifications succeeds") {
 
             beforeEachTest {
-                given(notificationDao.getAllNotifications()).willReturn(Single.just(notificationDbEntities))
+                given(notificationDao.getAllNotifications()).willReturn(
+                    notificationDbEntitiesSingle
+                )
                 given(mapperDb.map(notificationDbEntities)).willReturn(notifications)
 
                 testListObserver = notificationLocalSource.getAllNotifications().test()
@@ -125,7 +120,7 @@ class NotificationLocalSourceTest : Spek({
             }
         }
 
-        context("when getting all notifications fails"){
+        context("when getting all notifications fails") {
 
             beforeEachTest {
                 given(notificationDao.getAllNotifications()).willReturn(Single.error(error))

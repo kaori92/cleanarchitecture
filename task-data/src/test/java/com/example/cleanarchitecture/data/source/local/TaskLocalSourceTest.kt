@@ -37,7 +37,7 @@ class TaskLocalSourceTest : Spek({
     val error = Throwable("error")
 
     describe("inserting task") {
-        context("when inserting task"){
+        context("when calling insert task"){
             beforeEachTest {
                 given(mapperDb.reverse(task)).willReturn(taskDbEntity)
 
@@ -46,12 +46,6 @@ class TaskLocalSourceTest : Spek({
 
             it("should taskDao be called with insertTask") {
                 verify(taskDao).insertTask(taskDbEntity)
-            }
-        }
-
-        context("when inserting task"){
-            beforeEachTest {
-                taskLocalSource.insertTask(task)
             }
 
             it("should mapperDb be called with reverse") {
@@ -89,22 +83,17 @@ class TaskLocalSourceTest : Spek({
     }
 
     describe("getting all tasks") {
-        context("getting all tasks"){
+        context("calling get all tasks"){
             beforeEachTest {
+                given(taskDao.getAllTasks()).willReturn(Single.just(taskDbEntities))
                 taskLocalSource.getAllTasks()
             }
 
             it("should taskDao be called with getAllTasks") {
                 verify(taskDao).getAllTasks()
             }
-        }
 
-        context("getting all tasks"){
-            beforeEachTest {
-                given(taskDao.getAllTasks()).willReturn(Single.just(taskDbEntities))
-                taskLocalSource.getAllTasks()
-            }
-// TODO fix
+            // TODO fix
             it("should mapperDb be called with map") {
                 verify(mapperDb).map(taskDbEntities)
             }

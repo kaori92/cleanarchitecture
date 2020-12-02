@@ -29,6 +29,7 @@ class TaskRepositoryImplTest : Spek({
     val task = Task("abc")
     val tasks = listOf(Task("abc"))
 
+    lateinit var observer: TestObserver<Void>
     lateinit var testObserverList: TestObserver<List<Task>>
 
     describe("inserting task") {
@@ -38,7 +39,7 @@ class TaskRepositoryImplTest : Spek({
                 given(remoteSource.insertTask(task)).willReturn(Completable.complete())
                 given(localSource.insertTask(task)).willReturn(Completable.complete())
 
-                taskRepository.insertTask(task, true)
+                observer = taskRepository.insertTask(task, true).test()
             }
 
             it("should call local source") {
@@ -47,6 +48,10 @@ class TaskRepositoryImplTest : Spek({
 
             it("should call remote source") {
                 verify(remoteSource).insertTask(task)
+            }
+
+            it("should complete") {
+                observer.assertComplete()
             }
         }
 

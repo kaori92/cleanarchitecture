@@ -43,6 +43,10 @@ class AddNotificationPresenterTest : Spek({
                 presenter.insertNotification(notification)
             }
 
+            it("should show notification") {
+                verify(view).showNotification(notification)
+            }
+
             it("should call view openNotificationList") {
                 verify(view).openNotificationList()
             }

@@ -21,9 +21,9 @@ constructor(
     }
 
     override fun getAllTasks(): Single<List<Task>> {
-        return taskDao.getAllTasks()?.map {
+        return taskDao.getAllTasks().map {
             mapperDb.map(it)
-        } ?: Single.just(listOf())
+        }
     }
 
 }

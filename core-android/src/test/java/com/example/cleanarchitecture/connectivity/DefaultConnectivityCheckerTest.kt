@@ -52,7 +52,7 @@ class DefaultConnectivityCheckerTest : Spek({
             }
 
             it("should return true"){
-                assertEquals(result, true)
+                assertEquals(true, result)
             }
         }
 
@@ -66,7 +66,7 @@ class DefaultConnectivityCheckerTest : Spek({
             }
 
             it("should return true"){
-                assertEquals(result, true)
+                assertEquals(true, result)
             }
         }
 
@@ -80,7 +80,7 @@ class DefaultConnectivityCheckerTest : Spek({
             }
 
             it("should return true"){
-                assertEquals(result, true)
+                assertEquals(true, result)
             }
         }
 
@@ -94,7 +94,7 @@ class DefaultConnectivityCheckerTest : Spek({
             }
 
             it("should return false"){
-                assertEquals(result, false)
+                assertEquals(false, result)
             }
         }
     }

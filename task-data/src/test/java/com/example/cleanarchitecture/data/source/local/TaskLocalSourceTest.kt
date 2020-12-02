@@ -83,20 +83,26 @@ class TaskLocalSourceTest : Spek({
     }
 
     describe("getting all tasks") {
+        lateinit var testObserver: TestObserver<List<Task>>
+
         context("calling get all tasks"){
             beforeEachTest {
                 given(taskDao.getAllTasks()).willReturn(Single.just(taskDbEntities))
-                taskLocalSource.getAllTasks()
+                testObserver = taskLocalSource.getAllTasks().test()
             }
 
             it("should taskDao be called with getAllTasks") {
                 verify(taskDao).getAllTasks()
             }
 
-            // TODO fix
             it("should mapperDb be called with map") {
                 verify(mapperDb).map(taskDbEntities)
             }
+
+            it("should complete") {
+                testObserver.assertComplete()
+            }
+
         }
 
         context("when getting all tasks succeeds"){

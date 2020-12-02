@@ -20,7 +20,6 @@ class AddNotificationPresenter(
             .observeOn(schedulerProvider.main())
             .subscribeOn(schedulerProvider.io())
             .subscribe({
-                viewState.showNotification(notification)
                 viewState.showToast(
                     getStringUseCase.execute(
                         R.string.notification_added

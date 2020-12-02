@@ -29,6 +29,7 @@ class NotificationRepositoryImplTest : Spek({
     val notification = MyNotification("abc")
     val notifications = listOf(MyNotification("abc"))
 
+    lateinit var observer: TestObserver<Void>
     lateinit var testObserverList: TestObserver<List<MyNotification>>
 
     describe("inserting notification") {
@@ -38,7 +39,7 @@ class NotificationRepositoryImplTest : Spek({
                 given(remoteSource.insertNotification(notification)).willReturn(Completable.complete())
                 given(localSource.insertNotification(notification)).willReturn(Completable.complete())
 
-                notificationRepository.insertNotification(notification, true)
+                observer = notificationRepository.insertNotification(notification, true).test()
             }
 
             it("should call local source") {
@@ -47,6 +48,10 @@ class NotificationRepositoryImplTest : Spek({
 
             it("should call remote source") {
                 verify(remoteSource).insertNotification(notification)
+            }
+
+            it("should complete") {
+                observer.assertComplete()
             }
         }
 

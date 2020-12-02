@@ -88,19 +88,25 @@ class NotificationLocalSourceTest : Spek({
     }
 
     describe("getting all notifications") {
+        lateinit var testObserver: TestObserver<List<MyNotification>>
+
         context("calling get all notifications") {
             beforeEachTest {
                 given(notificationDao.getAllNotifications()).willReturn(notificationDbEntitiesSingle)
 
-                notificationLocalSource.getAllNotifications()
+                testObserver = notificationLocalSource.getAllNotifications().test()
             }
-            // TODO fix
+
             it("should mapperDb be called with map") {
                 verify(mapperDb).map(notificationDbEntities)
             }
 
             it("should notificationDao be called with getAllNotifications") {
                 verify(notificationDao).getAllNotifications()
+            }
+
+            it("should complete") {
+                testObserver.assertComplete()
             }
         }
 

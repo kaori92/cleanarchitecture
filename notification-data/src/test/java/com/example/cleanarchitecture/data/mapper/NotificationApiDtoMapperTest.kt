@@ -14,28 +14,28 @@ class NotificationApiDtoMapperTest {
     fun mapTest_shouldMapToNotification() {
         val notificationDto = NotificationApiDto(title)
         val notification = mapper.map(notificationDto)
-        Assert.assertEquals(notification.title, title)
+        Assert.assertEquals(title, notification.title)
     }
 
     @Test
     fun reverseTest_shouldMapToNotificationApiDto() {
         val notification = MyNotification(title)
         val notificationDto = mapper.reverse(notification)
-        Assert.assertEquals(notificationDto.title, title)
+        Assert.assertEquals(title, notificationDto.title)
     }
 
     @Test
     fun mapTest_emptyList() {
         val mappedList = mapper.map(emptyList())
-        Assert.assertEquals(mappedList.size, 0)
+        Assert.assertEquals(0, mappedList.size)
     }
 
     @Test
     fun mapTest_notEmptyList() {
         val notification = NotificationApiDto(title)
         val mappedList = mapper.map(listOf(notification, notification, notification, notification))
-        Assert.assertEquals(mappedList.size, 4)
-        Assert.assertEquals(mappedList[0].title, title)
+        Assert.assertEquals(4, mappedList.size)
+        Assert.assertEquals(title, mappedList[0].title)
     }
 
 }

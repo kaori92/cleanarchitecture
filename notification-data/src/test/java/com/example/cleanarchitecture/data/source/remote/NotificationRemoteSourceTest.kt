@@ -83,28 +83,24 @@ class NotificationRemoteSourceTest : Spek({
     }
 
     describe("getting notifications") {
+        lateinit var testObserver: TestObserver<List<MyNotification>>
 
         context("getting all notifications"){
             beforeEachTest {
                 given(notificationRetrofitService.getNotifications()).willReturn(notificationListSingle)
-                notificationRemoteSource.getAllNotifications()
+                testObserver = notificationRemoteSource.getAllNotifications().test()
+            }
+
+            it("should mapperApi be called with map") {
+                verify(mapperApi).map(notificationApiDtos)
             }
 
             it("should notificationRetrofitService be called with getNotifications") {
                 verify(notificationRetrofitService).getNotifications()
             }
-        }
 
-        context("getting all notifications"){
-            beforeEachTest {
-                given(notificationRetrofitService.getNotifications()).willReturn(notificationListSingle)
-
-                notificationRemoteSource.getAllNotifications()
-            }
-
-            //TODO: fix
-            it("should mapperApi be called with map") {
-                verify(mapperApi).map(notificationApiDtos)
+            it("should complete") {
+                testObserver.assertComplete()
             }
         }
 

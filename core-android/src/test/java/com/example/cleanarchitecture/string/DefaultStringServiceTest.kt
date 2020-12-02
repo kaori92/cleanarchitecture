@@ -30,7 +30,7 @@ class DefaultStringServiceTest : Spek({
             }
 
             it("should call context getString"){
-                assertEquals(result, message)
+                assertEquals(message, result)
             }
         }
 

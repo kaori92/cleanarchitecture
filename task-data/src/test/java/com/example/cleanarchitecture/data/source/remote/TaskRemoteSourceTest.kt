@@ -84,20 +84,24 @@ class TaskRemoteSourceTest : Spek({
     }
 
     describe("getting tasks") {
+        lateinit var testObserver: TestObserver<List<Task>>
 
         context("calling get all tasks"){
             beforeEachTest {
                 given(taskRetrofitService.getTasks()).willReturn(taskListSingle)
-                taskRemoteSource.getAllTasks()
+                testObserver = taskRemoteSource.getAllTasks().test()
             }
 
             it("should taskRetrofitService be called with getTasks") {
                 verify(taskRetrofitService).getTasks()
             }
 
-            //TODO: fix
             it("should mapperApi be called with map") {
                 verify(mapperApi).map(taskApiDtos)
+            }
+
+            it("should complete") {
+                testObserver.assertComplete()
             }
         }
 

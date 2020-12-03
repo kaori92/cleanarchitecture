@@ -13,6 +13,7 @@ import io.reactivex.Single
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
+
 class TaskListPresenterTest : Spek({
     val getTasksUseCase: GetTasksUseCase by memoized { mock<GetTasksUseCase>() }
     val schedulerProvider = TestSchedulerProvider
@@ -40,6 +41,15 @@ class TaskListPresenterTest : Spek({
             it("should call view setUpRecyclerView") {
                 verify(view).setUpRecyclerView(tasks.toTypedArray())
             }
+
+            it("should call showLoader") {
+                verify(view).showLoader()
+            }
+
+            it("should hide loader") {
+                verify(view).hideLoader()
+            }
+
         }
 
         context("when error is returned") {
@@ -50,10 +60,19 @@ class TaskListPresenterTest : Spek({
                 presenter.getAllTasks()
             }
 
+            it("should call showLoader") {
+                verify(view).showLoader()
+            }
+
             it("should show error") {
                 verify(view).showError(any())
             }
+
+            it("should hide loader") {
+                verify(view).hideLoader()
+            }
         }
+
     }
 
 })

@@ -1,12 +1,13 @@
 package com.example.cleanarchitecture.data.source.local
 
 import com.example.cleanarchitecture.data.mapper.base.Mapper
-import com.example.cleanarchitecture.data.source.LocalSource
+import com.example.cleanarchitecture.data.source.TaskLocalSource
 import com.example.cleanarchitecture.data.source.local.dao.TaskDao
 import com.example.cleanarchitecture.data.source.local.model.TaskDbEntity
 import com.example.cleanarchitecture.domain.model.Task
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
@@ -27,8 +28,8 @@ class TaskLocalSourceTest : Spek({
         mock<Mapper<Task, TaskDbEntity>>()
     }
 
-    val taskLocalSource: LocalSource by memoized {
-        TaskLocalSource(taskDao, mapperDb)
+    val taskLocalSource: TaskLocalSource by memoized {
+        DefaultTaskLocalSource(taskDao, mapperDb)
     }
 
     lateinit var testObserver: TestObserver<Void>
@@ -36,6 +37,22 @@ class TaskLocalSourceTest : Spek({
     val error = Throwable("error")
 
     describe("inserting task") {
+        context("when calling insert task"){
+            beforeEachTest {
+                given(mapperDb.reverse(task)).willReturn(taskDbEntity)
+
+                taskLocalSource.insertTask(task)
+            }
+
+            it("should taskDao be called with insertTask") {
+                verify(taskDao).insertTask(taskDbEntity)
+            }
+
+            it("should mapperDb be called with reverse") {
+                verify(mapperDb).reverse(task)
+            }
+        }
+
         context("when inserting task succeeds"){
 
             beforeEachTest {
@@ -52,20 +69,42 @@ class TaskLocalSourceTest : Spek({
 
         context("when inserting task fails"){
 
-            beforeEachTest {
-                given(taskDao.insertTask(taskDbEntity)).willReturn(Completable.error(error))
-                given(mapperDb.reverse(task)).willReturn(taskDbEntity)
+                beforeEachTest {
+                    given(taskDao.insertTask(taskDbEntity)).willReturn(Completable.error(error))
+                    given(mapperDb.reverse(task)).willReturn(taskDbEntity)
 
-                testObserver = taskLocalSource.insertTask(task).test()
-            }
+                    testObserver = taskLocalSource.insertTask(task).test()
+                }
 
-            it("should return error") {
-                testObserver.assertError(error)
+                it("should return error") {
+                    testObserver.assertError(error)
+                }
             }
-        }
     }
 
     describe("getting all tasks") {
+        lateinit var testObserver: TestObserver<List<Task>>
+
+        context("calling get all tasks"){
+            beforeEachTest {
+                given(taskDao.getAllTasks()).willReturn(Single.just(taskDbEntities))
+                testObserver = taskLocalSource.getAllTasks().test()
+            }
+
+            it("should taskDao be called with getAllTasks") {
+                verify(taskDao).getAllTasks()
+            }
+
+            it("should mapperDb be called with map") {
+                verify(mapperDb).map(taskDbEntities)
+            }
+
+            it("should complete") {
+                testObserver.assertComplete()
+            }
+
+        }
+
         context("when getting all tasks succeeds"){
 
             beforeEachTest {

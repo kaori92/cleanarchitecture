@@ -1,5 +1,3 @@
-<manifest package="com.example.cleanarchitecture"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<manifest package="com.example.cleanarchitecture">
+
 </manifest>

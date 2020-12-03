@@ -2,8 +2,8 @@ package com.example.cleanarchitecture.data.repository
 
 import com.example.cleanarchitecture.data.exception.CachePassedException
 import com.example.cleanarchitecture.data.exception.NoInternetException
-import com.example.cleanarchitecture.data.source.LocalSource
-import com.example.cleanarchitecture.data.source.RemoteSource
+import com.example.cleanarchitecture.data.source.TaskLocalSource
+import com.example.cleanarchitecture.data.source.TaskRemoteSource
 import com.example.cleanarchitecture.data.time.TimeService
 import com.example.cleanarchitecture.domain.model.Task
 import com.example.cleanarchitecture.domain.repository.TaskRepository
@@ -15,15 +15,16 @@ import javax.inject.Inject
 class TaskRepositoryImpl
 @Inject
 constructor(
-    private val remoteSource: RemoteSource,
-    private val localSource: LocalSource,
+    private val remoteSource: TaskRemoteSource,
+    private val localSource: TaskLocalSource,
     private val timeService: TimeService
 ) : TaskRepository {
 
     override fun insertTask(task: Task, isOnline: Boolean): Completable {
         return if (isOnline) {
-            remoteSource.insertTask(task)
-            localSource.insertTask(task)
+            remoteSource
+                .insertTask(task)
+                .andThen(localSource.insertTask(task))
         } else {
             throw NoInternetException("No internet - failed to insert task")
         }
@@ -31,13 +32,15 @@ constructor(
 
     override fun getAllTasks(isOnline: Boolean): Single<List<Task>> {
         return if (isOnline) {
-            timeService.setCacheTimestampMs(timeService.getTime())
-            remoteSource.getAllTasks()
+            remoteSource
+                .getAllTasks()
+                .doOnSuccess {
+                    timeService.updateCacheTimestampMs()
+                }
         } else {
-            if (timeService.getTime() - timeService.getCacheTimestampMs() > timeService.getCacheLimitMs()) {
+            if(timeService.isTimeoutExceeded()){
                 throw CachePassedException("Cache limit passed")
             } else {
-                timeService.setCacheTimestampMs(timeService.getTime())
                 localSource.getAllTasks()
             }
         }

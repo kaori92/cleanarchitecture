@@ -2,8 +2,8 @@ package com.example.cleanarchitecture.data.repository
 
 import com.example.cleanarchitecture.data.exception.CachePassedException
 import com.example.cleanarchitecture.data.exception.NoInternetException
-import com.example.cleanarchitecture.data.source.LocalSource
-import com.example.cleanarchitecture.data.source.RemoteSource
+import com.example.cleanarchitecture.data.source.TaskLocalSource
+import com.example.cleanarchitecture.data.source.TaskRemoteSource
 import com.example.cleanarchitecture.data.time.TimeService
 import com.example.cleanarchitecture.domain.model.Task
 import com.nhaarman.mockitokotlin2.given
@@ -18,8 +18,8 @@ import kotlin.test.assertFailsWith
 
 class TaskRepositoryImplTest : Spek({
 
-    val remoteSource by memoized { mock<RemoteSource>() }
-    val localSource by memoized { mock<LocalSource>() }
+    val remoteSource by memoized { mock<TaskRemoteSource>() }
+    val localSource by memoized { mock<TaskLocalSource>() }
     val timeService by memoized { mock<TimeService>() }
 
     val taskRepository by memoized {
@@ -28,28 +28,30 @@ class TaskRepositoryImplTest : Spek({
 
     val task = Task("abc")
     val tasks = listOf(Task("abc"))
-    lateinit var testObserver: TestObserver<Void>
+
+    lateinit var observer: TestObserver<Void>
     lateinit var testObserverList: TestObserver<List<Task>>
 
     describe("inserting task") {
 
         context("when online") {
             beforeEachTest {
+                given(remoteSource.insertTask(task)).willReturn(Completable.complete())
                 given(localSource.insertTask(task)).willReturn(Completable.complete())
 
-                testObserver = taskRepository.insertTask(task, true).test()
+                observer = taskRepository.insertTask(task, true).test()
             }
 
-            it("should completable be completed") {
-                testObserver.assertComplete()
+            it("should call local source") {
+                verify(localSource).insertTask(task)
             }
 
-            it("should remoteSource call insertTask") {
+            it("should call remote source") {
                 verify(remoteSource).insertTask(task)
             }
 
-            it("should localSource call insertTask") {
-                verify(localSource).insertTask(task)
+            it("should complete") {
+                observer.assertComplete()
             }
         }
 
@@ -77,14 +79,16 @@ class TaskRepositoryImplTest : Spek({
             it("should remoteSource call getAllTasks") {
                 verify(remoteSource).getAllTasks()
             }
+
+            it("should timeService call updateCacheTimestampMs") {
+                verify(timeService).updateCacheTimestampMs()
+            }
         }
 
         context("when offline") {
             context("and cache limit passed") {
                 beforeEachTest {
-                    given(timeService.getTime()).willReturn(5000)
-                    given(timeService.getCacheTimestampMs()).willReturn(2000)
-                    given(timeService.getCacheLimitMs()).willReturn(1000)
+                    given(timeService.isTimeoutExceeded()).willReturn(true)
                 }
 
                 it("should return error") {
@@ -97,10 +101,7 @@ class TaskRepositoryImplTest : Spek({
             context("and cache limit NOT passed") {
 
                 beforeEachTest {
-                    given(timeService.getTime()).willReturn(2000)
-                    given(timeService.getCacheTimestampMs()).willReturn(5000)
-                    given(timeService.getCacheLimitMs()).willReturn(1000)
-
+                    given(timeService.isTimeoutExceeded()).willReturn(false)
                     given(localSource.getAllTasks()).willReturn(Single.just(tasks))
                     testObserverList = taskRepository.getAllTasks(false).test()
                 }

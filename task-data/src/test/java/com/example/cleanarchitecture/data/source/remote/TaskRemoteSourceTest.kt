@@ -5,6 +5,7 @@ import com.example.cleanarchitecture.data.source.remote.model.TaskApiDto
 import com.example.cleanarchitecture.domain.model.Task
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
@@ -25,7 +26,7 @@ class TaskRemoteSourceTest : Spek({
     }
 
     val taskRemoteSource by memoized {
-        TaskRemoteSource(taskRetrofitService, mapperApi)
+        DefaultTaskRemoteSource(taskRetrofitService, mapperApi)
     }
 
     val title = "abc"
@@ -37,6 +38,22 @@ class TaskRemoteSourceTest : Spek({
     val taskListSingle = Single.just(taskApiDtos)
 
     describe("inserting task") {
+        context("when calling insert task"){
+            beforeEachTest {
+                given(mapperApi.reverse(task)).willReturn(taskApiDto)
+
+                taskRemoteSource.insertTask(task)
+            }
+
+            it("should taskRetrofitService be called with insertTask") {
+                verify(taskRetrofitService).insertTask(taskApiDto)
+            }
+
+
+            it("should mapperApi be called with reverse") {
+                verify(mapperApi).reverse(task)
+            }
+        }
 
         context("when inserting task succeeds"){
             beforeEachTest {
@@ -67,6 +84,26 @@ class TaskRemoteSourceTest : Spek({
     }
 
     describe("getting tasks") {
+        lateinit var testObserver: TestObserver<List<Task>>
+
+        context("calling get all tasks"){
+            beforeEachTest {
+                given(taskRetrofitService.getTasks()).willReturn(taskListSingle)
+                testObserver = taskRemoteSource.getAllTasks().test()
+            }
+
+            it("should taskRetrofitService be called with getTasks") {
+                verify(taskRetrofitService).getTasks()
+            }
+
+            it("should mapperApi be called with map") {
+                verify(mapperApi).map(taskApiDtos)
+            }
+
+            it("should complete") {
+                testObserver.assertComplete()
+            }
+        }
 
         context("when getting tasks succeeds"){
 

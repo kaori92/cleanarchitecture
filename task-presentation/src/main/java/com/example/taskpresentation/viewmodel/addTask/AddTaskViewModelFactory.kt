@@ -9,16 +9,14 @@ import java.lang.IllegalArgumentException
 
 class AddTaskViewModelFactory(
     private val insertTaskUseCase: InsertTaskUseCase,
-    private val getStringUseCase: GetStringResourceUseCase,
-    private val schedulerProvider: SchedulerProvider
+    private val getStringUseCase: GetStringResourceUseCase
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T  =
         if (modelClass.isAssignableFrom(AddTaskViewModel::class.java)) {
             AddTaskViewModel(
                 insertTaskUseCase,
-                getStringUseCase,
-                schedulerProvider
+                getStringUseCase
             ) as T
         } else {
             throw IllegalArgumentException("ViewModel not found")

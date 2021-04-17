@@ -6,7 +6,7 @@ class Resource<T> private constructor(
     val message: String?
 ) {
     enum class Status {
-        SUCCESS, ERROR, LOADING, STOP_LOADING
+        SUCCESS, ERROR, LOADING
     }
 
     companion object {
@@ -19,7 +19,5 @@ class Resource<T> private constructor(
         }
 
         fun <T> loading(): Resource<T> = Resource(Status.LOADING, null, null)
-
-        fun <T> stopLoading(): Resource<T> = Resource(Status.STOP_LOADING, null, null)
     }
 }

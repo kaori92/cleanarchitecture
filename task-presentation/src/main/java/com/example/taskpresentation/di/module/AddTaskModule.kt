@@ -44,8 +44,7 @@ object AddTaskModule {
     ): AddTaskViewModel =
         AddTaskViewModel(
             insertTaskUseCase,
-            getStringUseCase,
-            AndroidSchedulerProvider
+            getStringUseCase
         )
 
     @JvmStatic
@@ -56,7 +55,6 @@ object AddTaskModule {
     ): AddTaskViewModelFactory =
         AddTaskViewModelFactory(
             insertTaskUseCase,
-            getStringUseCase,
-            AndroidSchedulerProvider
+            getStringUseCase
         )
 }

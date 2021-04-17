@@ -7,7 +7,6 @@ import com.example.cleanarchitecture.data.source.TaskRemoteSource
 import com.example.cleanarchitecture.data.time.TimeService
 import com.example.taskdomain.model.Task
 import com.example.taskdomain.repository.TaskRepository
-import io.reactivex.Completable
 import javax.inject.Inject
 
 
@@ -19,11 +18,10 @@ constructor(
     private val timeService: TimeService
 ) : TaskRepository {
 
-    override fun insertTask(task: Task, isOnline: Boolean): Completable {
-        return if (isOnline) {
-            remoteSource
-                .insertTask(task)
-                .andThen(localSource.insertTask(task))
+    override suspend fun insertTask(task: Task, isOnline: Boolean) {
+        if (isOnline) {
+            remoteSource.insertTask(task)
+            localSource.insertTask(task)
         } else {
             throw NoInternetException("No internet - failed to insert task")
         }

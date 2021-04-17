@@ -41,25 +41,24 @@ class TaskListActivity : BaseActivity(), TaskListView {
 
         progressBar = findViewById(R.id.progressBar)
         setSupportActionBar(findViewById(R.id.my_toolbar))
-        setupObservers()
+        setupObserver()
     }
 
-    private fun setupObservers() {
+    private fun setupObserver() {
         viewModel.getAllTasks().observe(this, {
             it?.let { resource ->
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
-                        progressBar.visibility = View.GONE
+                        hideLoader()
                         resource.data?.let { tasks -> setUpRecyclerView(tasks.toTypedArray()) }
                     }
                     Resource.Status.ERROR -> {
-                        progressBar.visibility = View.GONE
+                        hideLoader()
                         Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-                        println(it.message.toString())
                         Log.e("XYZ", it.message.toString())
                     }
                     Resource.Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
+                        showLoader()
                     }
                 }
             }

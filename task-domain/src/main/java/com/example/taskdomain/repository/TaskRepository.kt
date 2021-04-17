@@ -7,7 +7,7 @@ import io.reactivex.Completable
  * Access point for managing task data.
  */
 interface TaskRepository {
-    fun insertTask(task: Task, isOnline: Boolean): Completable
+    suspend fun insertTask(task: Task, isOnline: Boolean)
 
     suspend fun getAllTasks(isOnline: Boolean): List<Task>
 }

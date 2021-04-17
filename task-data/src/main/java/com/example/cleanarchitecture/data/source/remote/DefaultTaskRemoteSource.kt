@@ -4,8 +4,6 @@ import com.example.cleanarchitecture.data.mapper.base.Mapper
 import com.example.cleanarchitecture.data.source.TaskRemoteSource
 import com.example.cleanarchitecture.data.source.remote.model.TaskApiDto
 import com.example.taskdomain.model.Task
-import io.reactivex.Completable
-import io.reactivex.Single
 import javax.inject.Inject
 
 class DefaultTaskRemoteSource
@@ -16,11 +14,8 @@ constructor(
 ) : TaskRemoteSource {
 
     // will only show toast with message "Task added" because the mock API does not allow creating tasks
-    override fun insertTask(task: Task): Completable {
-        return taskRetrofitService.insertTask(
-            mapperApi.reverse(task)
-        )
-    }
+    override fun insertTask(task: Task) =
+        taskRetrofitService.insertTask(mapperApi.reverse(task))
 
     override suspend fun getAllTasks(): List<Task> {
         return taskRetrofitService.getTasks().map {

@@ -2,7 +2,7 @@ package com.example.cleanarchitecture.data.source.remote
 
 import com.example.cleanarchitecture.data.mapper.base.Mapper
 import com.example.cleanarchitecture.data.source.remote.model.TaskApiDto
-import com.example.cleanarchitecture.domain.model.Task
+import com.example.taskdomain.model.Task
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify

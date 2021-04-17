@@ -1,7 +1,7 @@
 package com.example.cleanarchitecture.data.mapper
 
 import com.example.cleanarchitecture.data.source.remote.model.TaskApiDto
-import com.example.cleanarchitecture.domain.model.Task
+import com.example.taskdomain.model.Task
 import org.junit.Assert
 import org.junit.Test
 

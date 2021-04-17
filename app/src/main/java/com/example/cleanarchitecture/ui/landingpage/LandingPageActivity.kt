@@ -7,9 +7,9 @@ import com.example.cleanarchitecture.R
 import com.example.cleanarchitecture.di.component.DaggerLandingPageComponent
 import com.example.cleanarchitecture.di.component.LandingPageComponent
 import com.example.cleanarchitecture.di.module.LandingPageModule
-import com.example.cleanarchitecture.ui.core.BaseActivity
-import com.example.cleanarchitecture.ui.notification.NotificationListActivity
-import com.example.cleanarchitecture.ui.task.TaskListActivity
+import com.example.corepresentation.ui.core.BaseActivity
+import com.example.notificationpresentation.ui.notification.NotificationListActivity
+import com.example.taskpresentation.ui.task.TaskListActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 

@@ -5,7 +5,7 @@ import com.example.cleanarchitecture.data.exception.NoInternetException
 import com.example.cleanarchitecture.data.source.TaskLocalSource
 import com.example.cleanarchitecture.data.source.TaskRemoteSource
 import com.example.cleanarchitecture.data.time.TimeService
-import com.example.cleanarchitecture.domain.model.Task
+import com.example.taskdomain.model.Task
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify

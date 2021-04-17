@@ -5,10 +5,9 @@ import com.example.cleanarchitecture.data.exception.NoInternetException
 import com.example.cleanarchitecture.data.source.TaskLocalSource
 import com.example.cleanarchitecture.data.source.TaskRemoteSource
 import com.example.cleanarchitecture.data.time.TimeService
-import com.example.cleanarchitecture.domain.model.Task
-import com.example.cleanarchitecture.domain.repository.TaskRepository
+import com.example.taskdomain.model.Task
+import com.example.taskdomain.repository.TaskRepository
 import io.reactivex.Completable
-import io.reactivex.Single
 import javax.inject.Inject
 
 
@@ -30,20 +29,17 @@ constructor(
         }
     }
 
-    override fun getAllTasks(isOnline: Boolean): Single<List<Task>> {
+    override suspend fun getAllTasks(isOnline: Boolean): List<Task> {
         return if (isOnline) {
-            remoteSource
-                .getAllTasks()
-                .doOnSuccess {
-                    timeService.updateCacheTimestampMs()
-                }
+            remoteSource.getAllTasks()
         } else {
-            if(timeService.isTimeoutExceeded()){
+            if (timeService.isTimeoutExceeded()) {
                 throw CachePassedException("Cache limit passed")
             } else {
                 localSource.getAllTasks()
             }
         }
     }
+
 
 }

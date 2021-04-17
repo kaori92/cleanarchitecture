@@ -4,7 +4,7 @@ import com.example.cleanarchitecture.data.mapper.base.Mapper
 import com.example.cleanarchitecture.data.source.TaskLocalSource
 import com.example.cleanarchitecture.data.source.local.dao.TaskDao
 import com.example.cleanarchitecture.data.source.local.model.TaskDbEntity
-import com.example.cleanarchitecture.domain.model.Task
+import com.example.taskdomain.model.Task
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify

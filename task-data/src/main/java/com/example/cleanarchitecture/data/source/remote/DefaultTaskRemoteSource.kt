@@ -3,7 +3,7 @@ package com.example.cleanarchitecture.data.source.remote
 import com.example.cleanarchitecture.data.mapper.base.Mapper
 import com.example.cleanarchitecture.data.source.TaskRemoteSource
 import com.example.cleanarchitecture.data.source.remote.model.TaskApiDto
-import com.example.cleanarchitecture.domain.model.Task
+import com.example.taskdomain.model.Task
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -22,7 +22,7 @@ constructor(
         )
     }
 
-    override fun getAllTasks(): Single<List<Task>> {
+    override suspend fun getAllTasks(): List<Task> {
         return taskRetrofitService.getTasks().map {
             mapperApi.map(it)
         }

@@ -1,5 +1,8 @@
 package com.example.taskpresentation.viewmodel.addTask
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +18,12 @@ class AddTaskViewModel(
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
+    val query = mutableStateOf("Chixken")
     val viewAction = MutableLiveData<AddTaskViewAction>()
+
+    fun insertTask(task: Task) =
+        liveData<Resource<Completable>>(Dispatchers.IO) {
+            emit(Resource.loading())
 
     fun insertTask(task: Task) {
         viewModelScope.launch(dispatcherProvider.io()) {
@@ -33,4 +41,8 @@ class AddTaskViewModel(
     }
 
     fun getString(id: Int) = getStringUseCase.execute(id)
+
+    fun onQueryChanged(query: String){
+        this.query.value = query
+    }
 }

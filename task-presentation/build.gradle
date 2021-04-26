@@ -33,8 +33,13 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        useIR = true
     }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerVersion kotlin_version
+    }
 }
 
 dependencies {
@@ -57,11 +62,17 @@ dependencies {
 
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
+    //Dagger
+
     kapt 'com.google.dagger:dagger-compiler:' + daggerVersion
     implementation 'com.google.dagger:dagger-android:' + daggerVersion
     implementation 'com.google.dagger:dagger-android-support:' + daggerVersion
     kapt 'com.google.dagger:dagger-android-processor:' + daggerVersion
     implementation 'com.google.dagger:dagger:' + daggerVersion
+
+    // Assisted injection
+    compileOnly 'com.squareup.inject:assisted-inject-annotations-dagger2:0.5.2'
+    kapt 'com.squareup.inject:assisted-inject-processor-dagger2:0.5.2'
 
     // Room with RXjava2 & Kotlin
     implementation "androidx.room:room-runtime:$room_version"
@@ -74,14 +85,14 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.android.material:material:1.2.0'
 
-    kapt 'com.google.dagger:dagger-compiler:2.27'
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     kapt "com.github.moxy-community:moxy-compiler:2.0.2"
 
     // JETPACK
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.ui:ui-tooling:1.0.0-alpha07"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01'
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.ui:ui-framework:0.1.0-dev03"
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
@@ -94,7 +105,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
 
     // Jetpack Compose Integration for ViewModel
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha04"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_viewmodel_compose_version"
 
     // Annotation processor
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"

@@ -20,7 +20,6 @@ import com.example.taskpresentation.R
 import com.example.taskpresentation.di.component.DaggerTaskComponent
 import com.example.taskpresentation.viewmodel.task.TaskListViewAction
 import com.example.taskpresentation.viewmodel.task.TaskListViewModel
-import kotlinx.android.synthetic.main.activity_task_list.*
 
 class TaskListActivity : BaseActivity(), TaskListView {
 

@@ -47,8 +47,6 @@ kotlin {
     }
 }
 
-def daggerVersion = '2.27'
-
 dependencies {
     implementation project(':core-domain')
 

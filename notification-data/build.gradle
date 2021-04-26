@@ -47,9 +47,6 @@ kotlin {
     }
 }
 
-def room_version = '2.2.5'
-def daggerVersion = '2.29.1'
-
 dependencies {
     implementation project(":notification-domain")
     implementation project(":core-data")

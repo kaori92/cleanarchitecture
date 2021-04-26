@@ -18,7 +18,6 @@ import com.example.taskpresentation.R
 import com.example.taskpresentation.di.component.DaggerTaskComponent
 import com.example.cleanarchitecture.Resource
 import com.example.taskpresentation.viewmodel.task.TaskListViewModel
-import kotlinx.android.synthetic.main.activity_task_list.*
 
 class TaskListActivity : BaseActivity(), TaskListView {
 
@@ -37,11 +36,11 @@ class TaskListActivity : BaseActivity(), TaskListView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = component.viewModel()
-        setContentView(R.layout.activity_task_list)
-
-        progressBar = findViewById(R.id.progressBar)
-        setSupportActionBar(findViewById(R.id.my_toolbar))
-        setupObserver()
+//        setContentView(R.layout.activity_task_list)
+//
+//        progressBar = findViewById(R.id.progressBar)
+//        setSupportActionBar(findViewById(R.id.my_toolbar))
+//        setupObserver()
     }
 
     private fun setupObserver() {
@@ -50,7 +49,9 @@ class TaskListActivity : BaseActivity(), TaskListView {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         hideLoader()
-                        resource.data?.let { tasks -> setUpRecyclerView(tasks.toTypedArray()) }
+                        resource.data?.let { tasks ->
+//                            setUpRecyclerView(tasks.toTypedArray())
+                        }
                     }
                     Resource.Status.ERROR -> {
                         hideLoader()
@@ -65,17 +66,17 @@ class TaskListActivity : BaseActivity(), TaskListView {
         })
     }
 
-    private fun setUpRecyclerView(tasks: Array<Task>) {
-        val viewAdapter = TaskAdapter(tasks)
-
-        recyclerView.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(context)
-            adapter = viewAdapter
-        }
-
-        recyclerView.adapter?.notifyDataSetChanged()
-    }
+//    private fun setUpRecyclerView(tasks: Array<Task>) {
+//        val viewAdapter = TaskAdapter(tasks)
+//
+//        recyclerView.apply {
+//            setHasFixedSize(true)
+//            layoutManager = LinearLayoutManager(context)
+//            adapter = viewAdapter
+//        }
+//
+//        recyclerView.adapter?.notifyDataSetChanged()
+//    }
 
     private fun hideLoader() {
         progressBar.visibility = View.INVISIBLE

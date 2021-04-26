@@ -32,9 +32,6 @@ android {
     }
 }
 
-def daggerVersion = '2.27'
-def room_version = '2.2.5'
-
 dependencies {
     implementation project(":core-android")
     implementation project(":core-domain")

@@ -1,5 +1,7 @@
 package com.example.taskpresentation.viewmodel.addTask
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.example.taskdomain.interactor.definition.GetStringResourceUseCase
@@ -14,6 +16,8 @@ class AddTaskViewModel(
     private val getStringUseCase: GetStringResourceUseCase
 ) : ViewModel() {
 
+    val query = mutableStateOf("Chixken")
+
     fun insertTask(task: Task) =
         liveData<Resource<Completable>>(Dispatchers.IO) {
             emit(Resource.loading())
@@ -27,4 +31,8 @@ class AddTaskViewModel(
         }
 
     fun getString(id: Int) = getStringUseCase.execute(id)
+
+    fun onQueryChanged(query: String){
+        this.query.value = query
+    }
 }

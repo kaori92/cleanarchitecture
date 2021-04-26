@@ -38,17 +38,6 @@ object AddTaskModule {
 
     @JvmStatic
     @Provides
-    fun provideViewModel(
-        insertTaskUseCase: InsertTaskUseCase,
-        getStringUseCase: GetStringResourceUseCase
-    ): AddTaskViewModel =
-        AddTaskViewModel(
-            insertTaskUseCase,
-            getStringUseCase
-        )
-
-    @JvmStatic
-    @Provides
     fun provideViewModelFactory(
         insertTaskUseCase: InsertTaskUseCase,
         getStringUseCase: GetStringResourceUseCase

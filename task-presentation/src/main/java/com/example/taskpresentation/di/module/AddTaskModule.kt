@@ -6,9 +6,7 @@ import com.example.taskdomain.interactor.GetStringResourceUseCaseImpl
 import com.example.taskdomain.interactor.InsertTaskUseCaseImpl
 import com.example.taskdomain.interactor.definition.GetStringResourceUseCase
 import com.example.taskdomain.interactor.definition.InsertTaskUseCase
-import com.example.cleanarchitecture.scheduler.AndroidSchedulerProvider
 import com.example.cleanarchitecture.string.StringService
-import com.example.taskpresentation.viewmodel.addTask.AddTaskViewModel
 import com.example.taskpresentation.viewmodel.addTask.AddTaskViewModelFactory
 import dagger.Module
 import dagger.Provides
@@ -34,17 +32,6 @@ object AddTaskModule {
     ): GetStringResourceUseCase =
         GetStringResourceUseCaseImpl(
             stringService
-        )
-
-    @JvmStatic
-    @Provides
-    fun provideViewModel(
-        insertTaskUseCase: InsertTaskUseCase,
-        getStringUseCase: GetStringResourceUseCase
-    ): AddTaskViewModel =
-        AddTaskViewModel(
-            insertTaskUseCase,
-            getStringUseCase
         )
 
     @JvmStatic

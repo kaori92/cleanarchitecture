@@ -6,7 +6,7 @@ import com.example.cleanarchitecture.data.source.di.TaskDataSourceModule
 import com.example.cleanarchitecture.string.di.StringServiceModule
 import com.example.cleanarchitecture.data.time.di.TimeServiceModule
 import com.example.cleanarchitecture.di.component.ApplicationComponent
-import com.example.taskpresentation.viewmodel.addTask.AddTaskViewModel
+import com.example.taskpresentation.viewmodel.addTask.AddTaskViewModelFactory
 import dagger.Component
 
 @Component(
@@ -22,5 +22,5 @@ import dagger.Component
     ]
 )
 interface AddTaskComponent {
-    fun viewModel(): AddTaskViewModel
+    fun viewModelFactory(): AddTaskViewModelFactory
 }

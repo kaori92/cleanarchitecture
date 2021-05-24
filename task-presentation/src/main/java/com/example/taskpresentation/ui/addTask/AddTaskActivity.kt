@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.example.corepresentation.ui.core.BaseActivity
 import com.example.taskpresentation.di.module.AddTaskModule
 import com.example.taskpresentation.di.component.AddTaskComponent
@@ -13,12 +15,13 @@ import com.example.taskdomain.model.Task
 import com.example.taskpresentation.R
 import com.example.taskpresentation.di.component.DaggerAddTaskComponent
 import com.example.taskpresentation.ui.task.TaskListActivity
-import com.example.cleanarchitecture.Resource
+import com.example.taskpresentation.viewmodel.addTask.AddTaskViewAction
 import com.example.taskpresentation.viewmodel.addTask.AddTaskViewModel
 
 class AddTaskActivity : BaseActivity(),
     AddTaskView {
 
+    private lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: AddTaskViewModel
 
     private val component: AddTaskComponent by lazy {
@@ -31,7 +34,9 @@ class AddTaskActivity : BaseActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = component.viewModel()
+        viewModelFactory = component.viewModelFactory()
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+            .get(AddTaskViewModel::class.java)
 
         setContentView(R.layout.activity_add_task)
 
@@ -50,17 +55,17 @@ class AddTaskActivity : BaseActivity(),
     }
 
     private fun setupObserver(text: String) {
-        viewModel.insertTask(Task(text)).observe(this, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Resource.Status.SUCCESS -> {
-                        showToast(viewModel.getString(R.string.task_added))
-                        openTaskList()
-                    }
-                    Resource.Status.ERROR -> {
-                        Toast.makeText(baseContext, "Error ${resource.message}", Toast.LENGTH_LONG).show()
-                        Log.e("XYZ", resource.message.toString())
-                    }
+        viewModel.insertTask(Task(text))
+        viewModel.getViewAction().observe(this, { viewAction ->
+            when (viewAction) {
+                is AddTaskViewAction.ShowSuccessMessage -> {
+                    showToast(viewModel.getString(R.string.task_added))
+                    openTaskList()
+                }
+                is AddTaskViewAction.ShowErrorMessage -> {
+                    Toast.makeText(baseContext, "Error ${viewAction.message}", Toast.LENGTH_LONG)
+                        .show()
+                    Log.e("XYZ", viewAction.message)
                 }
             }
         })

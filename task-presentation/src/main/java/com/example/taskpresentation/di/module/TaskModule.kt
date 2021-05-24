@@ -5,7 +5,6 @@ import com.example.cleanarchitecture.data.repository.TaskRepositoryImpl
 import com.example.cleanarchitecture.data.time.TimeService
 import com.example.taskdomain.interactor.GetTasksUseCaseImpl
 import com.example.taskdomain.interactor.definition.GetTasksUseCase
-import com.example.taskpresentation.viewmodel.task.TaskListViewModel
 import com.example.taskpresentation.viewmodel.task.TaskListViewModelFactory
 import dagger.Module
 import dagger.Provides
@@ -14,24 +13,13 @@ import dagger.Provides
 object TaskModule {
 
     @Provides
-    internal fun provideModel(
+    internal fun provideGetTasksUseCase(
         taskRepositoryImpl: TaskRepositoryImpl,
         connectivityChecker: ConnectivityChecker
     ): GetTasksUseCase =
         GetTasksUseCaseImpl(
             taskRepositoryImpl,
             connectivityChecker
-        )
-
-    @JvmStatic
-    @Provides
-    fun provideViewModel(
-        getTasksUseCase: GetTasksUseCase,
-        timeService: TimeService
-    ): TaskListViewModel =
-        TaskListViewModel(
-            getTasksUseCase,
-            timeService
         )
 
     @JvmStatic

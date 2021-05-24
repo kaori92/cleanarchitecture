@@ -8,6 +8,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.taskpresentation.ui.addTask.AddTaskActivity
 import com.example.corepresentation.ui.core.BaseActivity
@@ -16,12 +18,13 @@ import com.example.taskpresentation.di.module.TaskModule
 import com.example.taskdomain.model.Task
 import com.example.taskpresentation.R
 import com.example.taskpresentation.di.component.DaggerTaskComponent
-import com.example.cleanarchitecture.Resource
+import com.example.taskpresentation.viewmodel.task.TaskListViewAction
 import com.example.taskpresentation.viewmodel.task.TaskListViewModel
 import kotlinx.android.synthetic.main.activity_task_list.*
 
 class TaskListActivity : BaseActivity(), TaskListView {
 
+    private lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: TaskListViewModel
 
     private val component: TaskComponent by lazy {
@@ -36,7 +39,10 @@ class TaskListActivity : BaseActivity(), TaskListView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = component.viewModel()
+        viewModelFactory = component.viewModelFactory()
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+            .get(TaskListViewModel::class.java)
+
         setContentView(R.layout.activity_task_list)
 
         progressBar = findViewById(R.id.progressBar)
@@ -45,24 +51,24 @@ class TaskListActivity : BaseActivity(), TaskListView {
     }
 
     private fun setupObserver() {
-        viewModel.getAllTasks().observe(this, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Resource.Status.SUCCESS -> {
+        viewModel.loadAllTasks()
+        viewModel.getViewAction()
+            .observe(this, { viewAction ->
+                when (viewAction) {
+                    is TaskListViewAction.ShowTasks -> {
                         hideLoader()
-                        resource.data?.let { tasks -> setUpRecyclerView(tasks.toTypedArray()) }
+                        setUpRecyclerView(viewAction.tasks.toTypedArray())
                     }
-                    Resource.Status.ERROR -> {
+                    is TaskListViewAction.ShowErrorMessage -> {
                         hideLoader()
-                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-                        Log.e("XYZ", it.message.toString())
+                        Toast.makeText(this, viewAction.message, Toast.LENGTH_LONG).show()
+                        Log.e("XYZ", viewAction.message)
                     }
-                    Resource.Status.LOADING -> {
+                    is TaskListViewAction.ShowLoading -> {
                         showLoader()
                     }
                 }
-            }
-        })
+            })
     }
 
     private fun setUpRecyclerView(tasks: Array<Task>) {

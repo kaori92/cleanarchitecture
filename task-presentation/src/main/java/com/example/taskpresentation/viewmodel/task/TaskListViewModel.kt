@@ -1,26 +1,31 @@
 package com.example.taskpresentation.viewmodel.task
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
+import androidx.lifecycle.*
 import com.example.taskdomain.interactor.definition.GetTasksUseCase
-import com.example.taskdomain.model.Task
-import com.example.cleanarchitecture.Resource
 import com.example.cleanarchitecture.data.time.TimeService
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class TaskListViewModel(
     private val getTasksUseCase: GetTasksUseCase,
     private val timeService: TimeService
 ) : ViewModel() {
 
-    fun getAllTasks() =
-        liveData<Resource<List<Task>>>(Dispatchers.IO) {
-            emit(Resource.loading())
+    private val viewAction = MutableLiveData<TaskListViewAction>()
+    fun getViewAction() = viewAction
+
+    fun loadAllTasks() {
+        viewModelScope.launch {
+            viewAction.postValue(TaskListViewAction.ShowLoading)
             try {
-                emit(Resource.success(data = getTasksUseCase.execute()))
+                viewAction.postValue(TaskListViewAction.ShowTasks(tasks = getTasksUseCase.execute()))
                 timeService.updateCacheTimestampMs()
             } catch (exception: Exception) {
-                emit(Resource.error(data = null, msg = "Error Occurred getting tasks: ${exception.message}"))
+                viewAction.postValue(
+                    TaskListViewAction.ShowErrorMessage(
+                        message = "Error Occurred getting tasks: ${exception.message}"
+                    )
+                )
             }
         }
+    }
 }

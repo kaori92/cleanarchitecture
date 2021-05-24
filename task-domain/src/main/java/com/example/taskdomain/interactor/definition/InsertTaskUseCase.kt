@@ -4,5 +4,5 @@ import com.example.taskdomain.model.Task
 
 interface InsertTaskUseCase {
 
-    suspend fun execute(task: Task) : Unit
+    suspend fun execute(task: Task)
 }

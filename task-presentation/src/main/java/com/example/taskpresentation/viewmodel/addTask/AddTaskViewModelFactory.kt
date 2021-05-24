@@ -2,7 +2,6 @@ package com.example.taskpresentation.viewmodel.addTask
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.cleanarchitecture.scheduler.SchedulerProvider
 import com.example.taskdomain.interactor.definition.GetStringResourceUseCase
 import com.example.taskdomain.interactor.definition.InsertTaskUseCase
 import java.lang.IllegalArgumentException

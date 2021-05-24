@@ -14,7 +14,7 @@ constructor(
 ) : TaskRemoteSource {
 
     // will only show toast with message "Task added" because the mock API does not allow creating tasks
-    override fun insertTask(task: Task) =
+    override suspend fun insertTask(task: Task) =
         taskRetrofitService.insertTask(mapperApi.reverse(task))
 
     override suspend fun getAllTasks(): List<Task> {

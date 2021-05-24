@@ -5,8 +5,6 @@ import com.example.cleanarchitecture.data.source.TaskLocalSource
 import com.example.cleanarchitecture.data.source.local.dao.TaskDao
 import com.example.cleanarchitecture.data.source.local.model.TaskDbEntity
 import com.example.taskdomain.model.Task
-import io.reactivex.Completable
-import io.reactivex.Single
 import javax.inject.Inject
 
 class DefaultTaskLocalSource
@@ -16,8 +14,8 @@ constructor(
     private val mapperDb: Mapper<Task, TaskDbEntity>
 ): TaskLocalSource {
 
-    override fun insertTask(task: Task): Completable {
-        return taskDao.insertTask(mapperDb.reverse(task))
+    override fun insertTask(task: Task) {
+        taskDao.insertTask(mapperDb.reverse(task))
     }
 
     override fun getAllTasks(): List<Task> {

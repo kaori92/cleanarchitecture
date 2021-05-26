@@ -15,15 +15,13 @@ class TaskListViewModel(
 
     fun loadAllTasks() {
         viewModelScope.launch {
-            viewAction.postValue(TaskListViewAction.ShowLoading)
+            viewAction.value = TaskListViewAction.ShowLoading
             try {
-                viewAction.postValue(TaskListViewAction.ShowTasks(tasks = getTasksUseCase.execute()))
+                viewAction.value = TaskListViewAction.ShowTasks(tasks = getTasksUseCase.execute())
                 timeService.updateCacheTimestampMs()
             } catch (exception: Exception) {
-                viewAction.postValue(
-                    TaskListViewAction.ShowErrorMessage(
+                viewAction.value = TaskListViewAction.ShowErrorMessage(
                         message = "Error Occurred getting tasks: ${exception.message}"
-                    )
                 )
             }
         }

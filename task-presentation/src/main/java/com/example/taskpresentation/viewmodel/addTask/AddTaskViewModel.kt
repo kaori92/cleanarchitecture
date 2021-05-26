@@ -20,13 +20,12 @@ class AddTaskViewModel(
         viewModelScope.launch {
             try {
                 insertTaskUseCase.execute(task)
-                viewAction.postValue(AddTaskViewAction.ShowSuccessMessage)
+                viewAction.value = AddTaskViewAction.ShowSuccessMessage
             } catch (exception: Exception) {
-                viewAction.postValue(
+                viewAction.value =
                     AddTaskViewAction.ShowErrorMessage(
                         message = "Error occurred inserting task $task: ${exception.message}"
                     )
-                )
             }
         }
     }

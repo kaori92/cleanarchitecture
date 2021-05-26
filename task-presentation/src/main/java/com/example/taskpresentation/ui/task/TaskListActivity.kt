@@ -24,7 +24,6 @@ import kotlinx.android.synthetic.main.activity_task_list.*
 
 class TaskListActivity : BaseActivity(), TaskListView {
 
-    private lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: TaskListViewModel
 
     private val component: TaskComponent by lazy {
@@ -39,25 +38,25 @@ class TaskListActivity : BaseActivity(), TaskListView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModelFactory = component.viewModelFactory()
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProviders.of(this, component.viewModelFactory())
             .get(TaskListViewModel::class.java)
 
         setContentView(R.layout.activity_task_list)
 
         progressBar = findViewById(R.id.progressBar)
         setSupportActionBar(findViewById(R.id.my_toolbar))
+
+        viewModel.loadAllTasks()
         setupObserver()
     }
 
     private fun setupObserver() {
-        viewModel.loadAllTasks()
         viewModel.getViewAction()
             .observe(this, { viewAction ->
                 when (viewAction) {
                     is TaskListViewAction.ShowTasks -> {
                         hideLoader()
-                        setUpRecyclerView(viewAction.tasks.toTypedArray())
+                        setUpRecyclerView(viewAction.tasks)
                     }
                     is TaskListViewAction.ShowErrorMessage -> {
                         hideLoader()
@@ -71,7 +70,7 @@ class TaskListActivity : BaseActivity(), TaskListView {
             })
     }
 
-    private fun setUpRecyclerView(tasks: Array<Task>) {
+    private fun setUpRecyclerView(tasks: List<Task>) {
         val viewAdapter = TaskAdapter(tasks)
 
         recyclerView.apply {

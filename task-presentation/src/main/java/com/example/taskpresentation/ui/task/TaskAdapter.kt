@@ -9,7 +9,7 @@ import com.example.taskdomain.model.Task
 import com.example.taskpresentation.R
 
 class TaskAdapter(
-    private val tasks: Array<Task>
+    private val tasks: List<Task>
 ) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

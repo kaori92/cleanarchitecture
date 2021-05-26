@@ -21,7 +21,6 @@ import com.example.taskpresentation.viewmodel.addTask.AddTaskViewModel
 class AddTaskActivity : BaseActivity(),
     AddTaskView {
 
-    private lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: AddTaskViewModel
 
     private val component: AddTaskComponent by lazy {
@@ -34,9 +33,10 @@ class AddTaskActivity : BaseActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModelFactory = component.viewModelFactory()
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProviders.of(this, component.viewModelFactory())
             .get(AddTaskViewModel::class.java)
+
+        setupObserver()
 
         setContentView(R.layout.activity_add_task)
 
@@ -50,12 +50,11 @@ class AddTaskActivity : BaseActivity(),
         val submitButton: Button = findViewById(R.id.submit_button)
 
         submitButton.setOnClickListener {
-            setupObserver(editText.text.toString())
+            viewModel.insertTask(Task(editText.text.toString()))
         }
     }
 
-    private fun setupObserver(text: String) {
-        viewModel.insertTask(Task(text))
+    private fun setupObserver() {
         viewModel.getViewAction().observe(this, { viewAction ->
             when (viewAction) {
                 is AddTaskViewAction.ShowSuccessMessage -> {

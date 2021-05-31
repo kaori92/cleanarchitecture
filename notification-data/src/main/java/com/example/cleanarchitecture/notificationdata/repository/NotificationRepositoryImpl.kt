@@ -34,7 +34,7 @@ constructor(
         return if (isOnline) {
             remoteSource
                 .getAllNotifications()
-                .doOnSuccess {
+                .doOnSuccess { // TODO move time service to domain
                     timeService.updateCacheTimestampMs()
                 }
         } else {

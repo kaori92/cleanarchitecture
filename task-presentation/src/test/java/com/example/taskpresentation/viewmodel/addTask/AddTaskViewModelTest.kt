@@ -2,10 +2,10 @@ package com.example.taskpresentation.viewmodel.addTask
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import com.example.cleanarchitecture.TestCoroutineRule
 import com.example.taskdomain.interactor.definition.GetStringResourceUseCase
 import com.example.taskdomain.interactor.definition.InsertTaskUseCase
 import com.example.taskdomain.model.Task
-import com.example.taskpresentation.TestCoroutineRule
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After

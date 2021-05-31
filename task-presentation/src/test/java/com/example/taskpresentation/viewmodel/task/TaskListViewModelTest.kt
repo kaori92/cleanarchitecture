@@ -2,11 +2,11 @@ package com.example.taskpresentation.viewmodel.task
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.example.cleanarchitecture.data.time.TimeService
+import com.example.cleanarchitecture.TestCoroutineRule
 import com.example.taskdomain.interactor.definition.GetTasksUseCase
 import com.example.taskdomain.model.Task
-import com.example.taskpresentation.TestCoroutineRule
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After
 import org.junit.Before
@@ -16,7 +16,6 @@ import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.Mockito.`when` as whenever
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
@@ -31,9 +30,6 @@ class TaskListViewModelTest {
     private lateinit var getTasksUseCase: GetTasksUseCase
 
     @Mock
-    private lateinit var timeService: TimeService
-
-    @Mock
     private lateinit var observer: Observer<TaskListViewAction>
 
     private lateinit var viewModel: TaskListViewModel
@@ -41,7 +37,7 @@ class TaskListViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = TaskListViewModel(getTasksUseCase, timeService)
+        viewModel = TaskListViewModel(getTasksUseCase)
     }
 
     private fun prepareForGetTasksSuccess() {
@@ -70,17 +66,6 @@ class TaskListViewModelTest {
             viewModel.loadAllTasks()
 
             verify(observer).onChanged(TaskListViewAction.ShowTasks(tasks))
-        }
-    }
-
-    @Test
-    fun testViewModelGetTasksShouldUpdateCacheTimestampMs() {
-        testCoroutineRule.runBlockingTest {
-            prepareForGetTasksSuccess()
-
-            viewModel.loadAllTasks()
-
-            verify(timeService).updateCacheTimestampMs()
         }
     }
 

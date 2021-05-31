@@ -15,21 +15,21 @@ object TaskModule {
     @Provides
     internal fun provideGetTasksUseCase(
         taskRepositoryImpl: TaskRepositoryImpl,
-        connectivityChecker: ConnectivityChecker
+        connectivityChecker: ConnectivityChecker,
+        timeService: TimeService
     ): GetTasksUseCase =
         GetTasksUseCaseImpl(
             taskRepositoryImpl,
-            connectivityChecker
+            connectivityChecker,
+            timeService
         )
 
     @JvmStatic
     @Provides
     fun provideViewModelFactory(
-        getTasksUseCase: GetTasksUseCase,
-        timeService: TimeService
+        getTasksUseCase: GetTasksUseCase
     ): TaskListViewModelFactory =
         TaskListViewModelFactory(
-            getTasksUseCase,
-            timeService
+            getTasksUseCase
         )
 }

@@ -44,6 +44,7 @@ dependencies {
     implementation project(':core-android')
     implementation project(':core-data')
     implementation project(':core-domain')
+    testImplementation project(':core-test')
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

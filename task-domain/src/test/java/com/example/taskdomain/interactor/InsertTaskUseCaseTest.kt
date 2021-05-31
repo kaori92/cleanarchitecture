@@ -1,56 +1,53 @@
 package com.example.taskdomain.interactor
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.cleanarchitecture.TestCoroutineRule
 import com.example.cleanarchitecture.connectivity.ConnectivityChecker
 import com.example.taskdomain.interactor.definition.InsertTaskUseCase
 import com.example.taskdomain.model.Task
 import com.example.taskdomain.repository.TaskRepository
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.mock
-import io.reactivex.Completable
-import io.reactivex.observers.TestObserver
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TestRule
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.MockitoJUnitRunner
 
-class InsertTaskUseCaseTest : Spek({
-    lateinit var testObserver: TestObserver<Void>
+@ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
+class InsertTaskUseCaseTest {
+    @get:Rule
+    val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
 
-    val taskRepository: TaskRepository by memoized { mock<TaskRepository>() }
-    val connectivityChecker: ConnectivityChecker by memoized { mock<ConnectivityChecker>() }
+    @get:Rule
+    val testCoroutineRule = TestCoroutineRule()
 
-    val useCase: InsertTaskUseCase by memoized {
-        InsertTaskUseCaseImpl(taskRepository, connectivityChecker)
+    @Mock
+    private lateinit var taskRepository: TaskRepository
+    @Mock
+    private lateinit var connectivityChecker: ConnectivityChecker
+
+    private lateinit var useCase: InsertTaskUseCase
+    private val task = Task("abc")
+    private val isOnline = true
+
+    @Before
+    fun setUp() {
+        useCase = InsertTaskUseCaseImpl(taskRepository, connectivityChecker)
     }
 
-    val task = Task("abc")
-    val error = Throwable("error")
-    val isOnline = true
+    @Test
+    fun testShouldCallRepositoryInsertTaskWhenCallingExecute() {
+        testCoroutineRule.runBlockingTest {
+            Mockito.`when`(connectivityChecker.isOnline()).thenAnswer { isOnline }
 
-    describe("insertTask") {
-        context("when inserting task succeeds") {
-            beforeEachTest {
-                given(connectivityChecker.isOnline()).willReturn(isOnline)
-                given(taskRepository.insertTask(task, isOnline)).willReturn(Completable.complete())
+            useCase.execute(task)
 
-                testObserver = useCase.execute(task).test()
-            }
-
-            it("should completable be completed") {
-                testObserver.assertComplete()
-            }
-
-        }
-
-        context("when inserting task failed") {
-            beforeEachTest {
-                given(connectivityChecker.isOnline()).willReturn(isOnline)
-                given(taskRepository.insertTask(task, isOnline)).willReturn(Completable.error(error))
-
-                testObserver = useCase.execute(task).test()
-            }
-
-            it("should return error") {
-                testObserver.assertError(error)
-            }
+            verify(taskRepository).insertTask(task, isOnline)
         }
     }
-})
+}

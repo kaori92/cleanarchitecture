@@ -14,7 +14,7 @@ constructor(
     private val mapperDb: Mapper<Task, TaskDbEntity>
 ): TaskLocalSource {
 
-    override fun insertTask(task: Task) {
+    override suspend fun insertTask(task: Task) {
         taskDao.insertTask(mapperDb.reverse(task))
     }
 

@@ -10,8 +10,6 @@ class InsertTaskUseCaseImpl(
     private val connectivityChecker: ConnectivityChecker
 ) : InsertTaskUseCase {
 
-    override suspend fun execute(task: Task) = taskRepository.insertTask(task, isOnline())
-
-    private fun isOnline() = connectivityChecker.isOnline()
+    override suspend fun execute(task: Task) = taskRepository.insertTask(task, connectivityChecker.isOnline())
 
 }

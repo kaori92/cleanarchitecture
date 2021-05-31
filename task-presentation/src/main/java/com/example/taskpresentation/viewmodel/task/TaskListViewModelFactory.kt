@@ -7,14 +7,12 @@ import com.example.taskdomain.interactor.definition.GetTasksUseCase
 import java.lang.IllegalArgumentException
 
 class TaskListViewModelFactory(
-    private val getTasksUseCase: GetTasksUseCase,
-    private val timeService: TimeService
+    private val getTasksUseCase: GetTasksUseCase
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T =
         if (modelClass.isAssignableFrom(TaskListViewModel::class.java)) {
             TaskListViewModel(
-                getTasksUseCase,
-                timeService
+                getTasksUseCase
             ) as T
         } else {
             throw IllegalArgumentException("ViewModel not found")

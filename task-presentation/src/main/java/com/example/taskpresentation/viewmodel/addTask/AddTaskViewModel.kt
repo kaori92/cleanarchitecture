@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.taskdomain.interactor.definition.GetStringResourceUseCase
 import com.example.taskdomain.interactor.definition.InsertTaskUseCase
 import com.example.taskdomain.model.Task
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AddTaskViewModel(
@@ -17,15 +18,16 @@ class AddTaskViewModel(
     fun getViewAction() = viewAction
 
     fun insertTask(task: Task) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 insertTaskUseCase.execute(task)
-                viewAction.value = AddTaskViewAction.ShowSuccessMessage
+                viewAction.postValue(AddTaskViewAction.ShowSuccessMessage)
             } catch (exception: Exception) {
-                viewAction.value =
+                viewAction.postValue(
                     AddTaskViewAction.ShowErrorMessage(
                         message = "Error occurred inserting task $task: ${exception.message}"
                     )
+                )
             }
         }
     }

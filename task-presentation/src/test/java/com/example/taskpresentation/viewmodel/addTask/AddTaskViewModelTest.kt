@@ -1,12 +1,15 @@
 package com.example.taskpresentation.viewmodel.addTask
 
+import androidx.arch.core.executor.testing.CountingTaskExecutorRule
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.example.cleanarchitecture.TestCoroutineRule
 import com.example.taskdomain.interactor.definition.GetStringResourceUseCase
 import com.example.taskdomain.interactor.definition.InsertTaskUseCase
 import com.example.taskdomain.model.Task
+import com.example.taskpresentation.viewmodel.TaskExecutorWithIdlingResourceRule
 import com.nhaarman.mockitokotlin2.verify
+import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After
 import org.junit.Before
@@ -17,6 +20,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
+import java.lang.Thread.sleep
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
@@ -42,23 +46,38 @@ class AddTaskViewModelTest {
     @Before
     fun setUp() {
         viewModel = AddTaskViewModel(insertTaskUseCase, getStringUseCase)
+
+        viewModel.viewAction.observeForever(observer)
     }
 
     private fun prepareForInsertTasksSuccess() {
         testCoroutineRule.runBlockingTest {
-            viewModel.getViewAction().observeForever(observer)
             Mockito.`when`(insertTaskUseCase.execute(task)).thenAnswer { }
         }
     }
 
     @Test
-    fun testViewModelInsertTaskShouldShowLoading() {
+    fun testViewModelInsertTaskShouldExecuteUseCaseWithSameTask() {
+        testCoroutineRule.runBlockingTest {
+            prepareForInsertTasksSuccess()
+
+            viewModel.insertTask(task)
+            verify(insertTaskUseCase).execute(task)
+        }
+    }
+
+    @Test
+    fun testViewModelInsertTaskShouldPostValueShowSuccess() {
+        val viewAction = AddTaskViewAction.ShowSuccessMessage
+
         testCoroutineRule.runBlockingTest {
             prepareForInsertTasksSuccess()
 
             viewModel.insertTask(task)
 
-            verify(observer).onChanged(AddTaskViewAction.ShowSuccessMessage)
+            sleep(10) // sometimes fails without
+
+            assertEquals(viewAction, viewModel.viewAction.value)
         }
     }
 
@@ -67,12 +86,13 @@ class AddTaskViewModelTest {
         testCoroutineRule.runBlockingTest {
             val message = "Error!"
             val exception = Exception(message)
-            viewModel.getViewAction().observeForever(observer)
+            viewModel.viewAction.observeForever(observer)
             Mockito.`when`(insertTaskUseCase.execute(task)).thenAnswer {
                 throw exception
             }
 
             viewModel.insertTask(task)
+            sleep(10) // sometimes fails without
 
             verify(observer).onChanged(AddTaskViewAction.ShowErrorMessage("Error occurred inserting task $task: $message"))
         }
@@ -80,6 +100,6 @@ class AddTaskViewModelTest {
 
     @After
     fun tearDown() {
-        viewModel.getViewAction().removeObserver(observer)
+        viewModel.viewAction.removeObserver(observer)
     }
 }

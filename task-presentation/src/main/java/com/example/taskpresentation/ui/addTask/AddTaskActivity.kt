@@ -55,7 +55,7 @@ class AddTaskActivity : BaseActivity(),
     }
 
     private fun setupObserver() {
-        viewModel.getViewAction().observe(this, { viewAction ->
+        viewModel.viewAction.observe(this, { viewAction ->
             when (viewAction) {
                 is AddTaskViewAction.ShowSuccessMessage -> {
                     showToast(viewModel.getString(R.string.task_added))

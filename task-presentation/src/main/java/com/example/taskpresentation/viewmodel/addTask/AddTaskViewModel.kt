@@ -14,8 +14,7 @@ class AddTaskViewModel(
     private val getStringUseCase: GetStringResourceUseCase
 ) : ViewModel() {
 
-    private val viewAction = MutableLiveData<AddTaskViewAction>()
-    fun getViewAction() = viewAction
+    val viewAction = MutableLiveData<AddTaskViewAction>()
 
     fun insertTask(task: Task) {
         viewModelScope.launch(Dispatchers.IO) {

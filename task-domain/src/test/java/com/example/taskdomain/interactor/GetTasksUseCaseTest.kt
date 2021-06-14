@@ -1,52 +1,78 @@
 package com.example.taskdomain.interactor
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.cleanarchitecture.TestCoroutineRule
 import com.example.cleanarchitecture.connectivity.ConnectivityChecker
 import com.example.cleanarchitecture.data.time.TimeService
 import com.example.taskdomain.interactor.definition.GetTasksUseCase
 import com.example.taskdomain.model.Task
 import com.example.taskdomain.repository.TaskRepository
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TestRule
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.MockitoJUnitRunner
 
-class GetTasksUseCaseTest : Spek({
-    val taskRepository: TaskRepository by memoized { mock<TaskRepository>() }
-    val connectivityChecker: ConnectivityChecker by memoized { mock<ConnectivityChecker>() }
-    val timeService: TimeService by memoized { mock<TimeService>() }
+@ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
+class GetTasksUseCaseTest {
+    @get:Rule
+    val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
 
-    val getTasksUseCase: GetTasksUseCase by memoized {
-        GetTasksUseCaseImpl(
+    @get:Rule
+    val testCoroutineRule = TestCoroutineRule()
+
+    @Mock
+    private lateinit var taskRepository: TaskRepository
+
+    @Mock
+    private lateinit var connectivityChecker: ConnectivityChecker
+
+    @Mock
+    private lateinit var timeService: TimeService
+
+    private lateinit var getTasksUseCase: GetTasksUseCase
+
+    private val tasks = listOf(Task("x"))
+    private val isOnline = true
+
+    @Before
+    fun setUp() {
+        getTasksUseCase = GetTasksUseCaseImpl(
             taskRepository,
             connectivityChecker,
             timeService
         )
     }
 
-    val tasks = listOf(Task("x"))
-    val isOnline = true
+    @Test
+    fun testShouldReturnCorrectTasksWhenGettingAllTasks() {
+        var result: List<Task>
+        testCoroutineRule.runBlockingTest {
+            Mockito.`when`(connectivityChecker.isOnline()).thenAnswer { isOnline }
+            Mockito.`when`(taskRepository.getAllTasks(isOnline)).thenAnswer { tasks }
 
-    describe("get all tasks") {
-        var result = listOf<Task>()
+            result = getTasksUseCase.execute()
 
-        context("when getting all tasks succeeds") {
-
-            beforeEachTest {
-                given(connectivityChecker.isOnline()).willReturn(isOnline)
-                given(taskRepository.getAllTasks(isOnline)).willReturn(tasks)
-
-                result = getTasksUseCase.execute()
-            }
-
-            it("should return correct tasks") {
-                Assert.assertEquals(result, tasks)
-            }
-
-            it("should update cache timestamp") {
-                verify(timeService).updateCacheTimestampMs()
-            }
+            Assert.assertEquals(result, tasks)
         }
     }
-})
+
+    @Test
+    fun testShouldUpdateCacheTimestampWhenGettingAllTasks() {
+        testCoroutineRule.runBlockingTest {
+            Mockito.`when`(connectivityChecker.isOnline()).thenAnswer { isOnline }
+            Mockito.`when`(taskRepository.getAllTasks(isOnline)).thenAnswer { tasks }
+
+            getTasksUseCase.execute()
+
+            verify(timeService).updateCacheTimestampMs()
+        }
+    }
+}

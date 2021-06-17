@@ -108,17 +108,11 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
 
     //Test
-    testImplementation 'androidx.test.ext:junit:1.1.1'
     testImplementation group: 'org.spekframework.spek2', name: 'spek-dsl-jvm', version: '2.0.9'
     testImplementation group: 'org.spekframework.spek2', name: 'spek-runner-junit5', version: '2.0.9'
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
-
-    testImplementation 'androidx.test.ext:junit:1.1.2'
     testImplementation "de.mannodermaus.junit5:android-test-core:1.0.0"
     androidTestRuntimeOnly "de.mannodermaus.junit5:android-test-runner:1.0.0"
-    testImplementation 'junit:junit:4.12'
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2"
 

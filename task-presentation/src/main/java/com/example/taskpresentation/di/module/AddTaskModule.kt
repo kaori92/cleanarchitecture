@@ -7,6 +7,7 @@ import com.example.taskdomain.interactor.InsertTaskUseCaseImpl
 import com.example.taskdomain.interactor.definition.GetStringResourceUseCase
 import com.example.taskdomain.interactor.definition.InsertTaskUseCase
 import com.example.cleanarchitecture.string.StringService
+import com.example.corepresentation.dispatcher.di.AndroidDispatcherProvider
 import com.example.taskpresentation.viewmodel.addTask.AddTaskViewModelFactory
 import dagger.Module
 import dagger.Provides
@@ -42,6 +43,7 @@ object AddTaskModule {
     ): AddTaskViewModelFactory =
         AddTaskViewModelFactory(
             insertTaskUseCase,
-            getStringUseCase
+            getStringUseCase,
+            AndroidDispatcherProvider
         )
 }

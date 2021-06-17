@@ -3,6 +3,7 @@ package com.example.taskpresentation.viewmodel.task
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.example.cleanarchitecture.TestCoroutineRule
+import com.example.corepresentation.dispatcher.di.TestDispatcherProvider
 import com.example.taskdomain.interactor.definition.GetTasksUseCase
 import com.example.taskdomain.model.Task
 import com.nhaarman.mockitokotlin2.verify
@@ -37,12 +38,13 @@ class TaskListViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = TaskListViewModel(getTasksUseCase)
+        viewModel = TaskListViewModel(getTasksUseCase, TestDispatcherProvider)
+
+        viewModel.getViewAction().observeForever(observer)
     }
 
     private fun prepareForGetTasksSuccess() {
         testCoroutineRule.runBlockingTest {
-            viewModel.getViewAction().observeForever(observer)
             whenever(getTasksUseCase.execute()).thenAnswer { tasks }
         }
     }
@@ -74,7 +76,6 @@ class TaskListViewModelTest {
         testCoroutineRule.runBlockingTest {
             val message = "Error!"
             val exception = Exception(message)
-            viewModel.getViewAction().observeForever(observer)
             whenever(getTasksUseCase.execute()).thenAnswer {
                 throw exception
             }

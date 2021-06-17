@@ -3,6 +3,7 @@ package com.example.taskpresentation.di.module
 import com.example.cleanarchitecture.connectivity.ConnectivityChecker
 import com.example.cleanarchitecture.data.repository.TaskRepositoryImpl
 import com.example.cleanarchitecture.data.time.TimeService
+import com.example.corepresentation.dispatcher.di.AndroidDispatcherProvider
 import com.example.taskdomain.interactor.GetTasksUseCaseImpl
 import com.example.taskdomain.interactor.definition.GetTasksUseCase
 import com.example.taskpresentation.viewmodel.task.TaskListViewModelFactory
@@ -30,6 +31,7 @@ object TaskModule {
         getTasksUseCase: GetTasksUseCase
     ): TaskListViewModelFactory =
         TaskListViewModelFactory(
-            getTasksUseCase
+            getTasksUseCase,
+            AndroidDispatcherProvider
         )
 }

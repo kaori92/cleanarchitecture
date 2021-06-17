@@ -1,13 +1,12 @@
 package com.example.taskpresentation.viewmodel.addTask
 
-import androidx.arch.core.executor.testing.CountingTaskExecutorRule
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.example.cleanarchitecture.TestCoroutineRule
+import com.example.corepresentation.dispatcher.di.TestDispatcherProvider
 import com.example.taskdomain.interactor.definition.GetStringResourceUseCase
 import com.example.taskdomain.interactor.definition.InsertTaskUseCase
 import com.example.taskdomain.model.Task
-import com.example.taskpresentation.viewmodel.TaskExecutorWithIdlingResourceRule
 import com.nhaarman.mockitokotlin2.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,7 +19,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
-import java.lang.Thread.sleep
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
@@ -45,7 +43,7 @@ class AddTaskViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = AddTaskViewModel(insertTaskUseCase, getStringUseCase)
+        viewModel = AddTaskViewModel(insertTaskUseCase, getStringUseCase, TestDispatcherProvider)
 
         viewModel.viewAction.observeForever(observer)
     }
@@ -75,8 +73,6 @@ class AddTaskViewModelTest {
 
             viewModel.insertTask(task)
 
-            sleep(10) // sometimes fails without
-
             assertEquals(viewAction, viewModel.viewAction.value)
         }
     }
@@ -92,7 +88,6 @@ class AddTaskViewModelTest {
             }
 
             viewModel.insertTask(task)
-            sleep(10) // sometimes fails without
 
             verify(observer).onChanged(AddTaskViewAction.ShowErrorMessage("Error occurred inserting task $task: $message"))
         }

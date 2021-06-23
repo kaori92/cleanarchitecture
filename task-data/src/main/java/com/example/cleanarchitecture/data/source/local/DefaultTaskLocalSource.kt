@@ -18,7 +18,7 @@ constructor(
         taskDao.insertTask(mapperDb.reverse(task))
     }
 
-    override fun getAllTasks(): List<Task> {
+    override suspend fun getAllTasks(): List<Task> {
         return taskDao.getAllTasks().map {
             mapperDb.map(it)
         }

@@ -2,7 +2,7 @@ package com.example.taskpresentation.di.module
 
 import com.example.cleanarchitecture.connectivity.ConnectivityChecker
 import com.example.cleanarchitecture.data.repository.TaskRepositoryImpl
-import com.example.cleanarchitecture.data.time.TimeService
+import com.example.cleanarchitecture.time.TimeService
 import com.example.corepresentation.dispatcher.di.AndroidDispatcherProvider
 import com.example.taskdomain.interactor.GetTasksUseCaseImpl
 import com.example.taskdomain.interactor.definition.GetTasksUseCase

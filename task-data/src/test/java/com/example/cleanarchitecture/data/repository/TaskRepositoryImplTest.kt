@@ -6,7 +6,7 @@ import com.example.cleanarchitecture.data.exception.CachePassedException
 import com.example.cleanarchitecture.data.exception.NoInternetException
 import com.example.cleanarchitecture.data.source.TaskLocalSource
 import com.example.cleanarchitecture.data.source.TaskRemoteSource
-import com.example.cleanarchitecture.data.time.TimeService
+import com.example.cleanarchitecture.time.TimeService
 import com.example.taskdomain.model.Task
 import com.example.taskdomain.repository.TaskRepository
 import com.nhaarman.mockitokotlin2.verify

@@ -1,4 +1,4 @@
-package com.example.cleanarchitecture.data.time
+package com.example.cleanarchitecture.time
 
 interface TimeService {
     var cacheTimestampMs: Long

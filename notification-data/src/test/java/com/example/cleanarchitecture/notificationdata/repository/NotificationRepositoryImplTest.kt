@@ -4,7 +4,7 @@ import com.example.cleanarchitecture.data.exception.CachePassedException
 import com.example.cleanarchitecture.data.exception.NoInternetException
 import com.example.cleanarchitecture.notificationdata.source.NotificationLocalSource
 import com.example.cleanarchitecture.notificationdata.source.NotificationRemoteSource
-import com.example.cleanarchitecture.data.time.TimeService
+import com.example.cleanarchitecture.time.TimeService
 import com.example.notificationdomain.model.MyNotification
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock

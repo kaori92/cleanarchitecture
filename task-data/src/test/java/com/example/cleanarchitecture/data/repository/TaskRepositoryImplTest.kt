@@ -1,120 +1,101 @@
 package com.example.cleanarchitecture.data.repository
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.cleanarchitecture.TestCoroutineRule
 import com.example.cleanarchitecture.data.exception.CachePassedException
 import com.example.cleanarchitecture.data.exception.NoInternetException
 import com.example.cleanarchitecture.data.source.TaskLocalSource
 import com.example.cleanarchitecture.data.source.TaskRemoteSource
-import com.example.cleanarchitecture.data.time.TimeService
-import com.example.cleanarchitecture.domain.model.Task
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.mock
+import com.example.cleanarchitecture.time.TimeService
+import com.example.taskdomain.model.Task
+import com.example.taskdomain.repository.TaskRepository
 import com.nhaarman.mockitokotlin2.verify
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.observers.TestObserver
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertFailsWith
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TestRule
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.MockitoJUnitRunner
 
-class TaskRepositoryImplTest : Spek({
+@ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
+class TaskRepositoryImplTest {
+    @get:Rule
+    val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
 
-    val remoteSource by memoized { mock<TaskRemoteSource>() }
-    val localSource by memoized { mock<TaskLocalSource>() }
-    val timeService by memoized { mock<TimeService>() }
+    @get:Rule
+    val testCoroutineRule = TestCoroutineRule()
 
-    val taskRepository by memoized {
-        TaskRepositoryImpl(remoteSource, localSource, timeService)
+    @Mock
+    private lateinit var remoteSource: TaskRemoteSource
+    @Mock
+    private lateinit var localSource: TaskLocalSource
+    @Mock
+    private lateinit var timeService: TimeService
+
+    private lateinit var taskRepository: TaskRepository
+
+    private val task = Task("abc")
+
+    @Before
+    fun setUp() {
+        taskRepository = TaskRepositoryImpl(remoteSource, localSource, timeService)
     }
 
-    val task = Task("abc")
-    val tasks = listOf(Task("abc"))
+    @Test
+    fun testWhenInsertingTaskOnlineShouldCallLocalSourceInsertTask() {
+        testCoroutineRule.runBlockingTest {
+            taskRepository.insertTask(task, true)
 
-    lateinit var observer: TestObserver<Void>
-    lateinit var testObserverList: TestObserver<List<Task>>
-
-    describe("inserting task") {
-
-        context("when online") {
-            beforeEachTest {
-                given(remoteSource.insertTask(task)).willReturn(Completable.complete())
-                given(localSource.insertTask(task)).willReturn(Completable.complete())
-
-                observer = taskRepository.insertTask(task, true).test()
-            }
-
-            it("should call local source") {
-                verify(localSource).insertTask(task)
-            }
-
-            it("should call remote source") {
-                verify(remoteSource).insertTask(task)
-            }
-
-            it("should complete") {
-                observer.assertComplete()
-            }
-        }
-
-        context("when offline") {
-            it("should return error") {
-                assertFailsWith<NoInternetException> {
-                    taskRepository.insertTask(task, false)
-                }
-            }
+            verify(localSource).insertTask(task)
         }
     }
 
-    describe("getting tasks") {
+    @Test
+    fun testWhenInsertingTaskOnlineShouldCallRemoteSourceInsertTask() {
+        testCoroutineRule.runBlockingTest {
+            taskRepository.insertTask(task, true)
 
-        context("when online") {
-            beforeEachTest {
-                given(remoteSource.getAllTasks()).willReturn(Single.just(tasks))
-                testObserverList = taskRepository.getAllTasks(true).test()
-            }
-
-            it("should return tasks") {
-                testObserverList.assertResult(tasks)
-            }
-
-            it("should remoteSource call getAllTasks") {
-                verify(remoteSource).getAllTasks()
-            }
-
-            it("should timeService call updateCacheTimestampMs") {
-                verify(timeService).updateCacheTimestampMs()
-            }
-        }
-
-        context("when offline") {
-            context("and cache limit passed") {
-                beforeEachTest {
-                    given(timeService.isTimeoutExceeded()).willReturn(true)
-                }
-
-                it("should return error") {
-                    assertFailsWith<CachePassedException> {
-                        taskRepository.getAllTasks(false)
-                    }
-                }
-            }
-
-            context("and cache limit NOT passed") {
-
-                beforeEachTest {
-                    given(timeService.isTimeoutExceeded()).willReturn(false)
-                    given(localSource.getAllTasks()).willReturn(Single.just(tasks))
-                    testObserverList = taskRepository.getAllTasks(false).test()
-                }
-
-                it("should return tasks") {
-                    testObserverList.assertResult(tasks)
-                }
-
-                it("should localSource call getAllTasks") {
-                    verify(localSource).getAllTasks()
-                }
-            }
+            verify(remoteSource).insertTask(task)
         }
     }
 
-})
+    @Test(expected = NoInternetException::class)
+    fun testWhenInsertingTaskOfflineShouldThrowNoInternetException() {
+        testCoroutineRule.runBlockingTest {
+            taskRepository.insertTask(task, false)
+        }
+    }
+
+    @Test
+    fun testWhenGettingTasksOnlineShouldCallRemoteSourceGetTasks() {
+        testCoroutineRule.runBlockingTest {
+            taskRepository.getAllTasks(true)
+
+            verify(remoteSource).getAllTasks()
+        }
+    }
+
+    @Test(expected = CachePassedException::class)
+    fun testWhenGettingTasksOfflineAndTimeoutExceededShouldThrowCachePassedException() {
+        testCoroutineRule.runBlockingTest {
+            Mockito.`when`(timeService.isTimeoutExceeded()).thenAnswer { true }
+
+            taskRepository.getAllTasks(false)
+        }
+    }
+
+    @Test
+    fun testWhenGettingTasksOfflineAndNoTimeoutShouldGetLocalTasks() {
+        testCoroutineRule.runBlockingTest {
+            Mockito.`when`(timeService.isTimeoutExceeded()).thenAnswer { false }
+
+            taskRepository.getAllTasks(false)
+
+            verify(localSource).getAllTasks()
+        }
+    }
+}

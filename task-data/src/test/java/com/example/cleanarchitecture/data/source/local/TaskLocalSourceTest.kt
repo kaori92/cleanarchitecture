@@ -1,136 +1,70 @@
 package com.example.cleanarchitecture.data.source.local
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.cleanarchitecture.TestCoroutineRule
 import com.example.cleanarchitecture.data.mapper.base.Mapper
 import com.example.cleanarchitecture.data.source.TaskLocalSource
 import com.example.cleanarchitecture.data.source.local.dao.TaskDao
 import com.example.cleanarchitecture.data.source.local.model.TaskDbEntity
-import com.example.cleanarchitecture.domain.model.Task
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.mock
+import com.example.taskdomain.model.Task
 import com.nhaarman.mockitokotlin2.verify
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.observers.TestObserver
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TestRule
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.MockitoJUnitRunner
 
-class TaskLocalSourceTest : Spek({
-    val title = "abc"
-    val task = Task(title)
-    val taskDbEntity = TaskDbEntity(title)
-    val tasks = listOf(task)
-    val taskDbEntities = listOf(taskDbEntity)
+@ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
+class TaskLocalSourceTest {
+    @get:Rule
+    val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
 
-    val taskDao: TaskDao by memoized {
-        mock<TaskDao>()
-    }
-    val mapperDb: Mapper<Task, TaskDbEntity> by memoized {
-        mock<Mapper<Task, TaskDbEntity>>()
-    }
+    @get:Rule
+    val testCoroutineRule = TestCoroutineRule()
 
-    val taskLocalSource: TaskLocalSource by memoized {
-        DefaultTaskLocalSource(taskDao, mapperDb)
-    }
+    private val title = "abc"
+    private val task = Task(title)
+    private val taskDbEntity = TaskDbEntity(title)
+    private val tasks = listOf(task)
+    private val taskDbEntities = listOf(taskDbEntity)
 
-    lateinit var testObserver: TestObserver<Void>
-    lateinit var testListObserver: TestObserver<List<Task>>
-    val error = Throwable("error")
+    @Mock
+    private lateinit var taskDao: TaskDao
+    @Mock
+    private lateinit var mapperDb: Mapper<Task, TaskDbEntity>
+    private lateinit var taskLocalSource: TaskLocalSource
 
-    describe("inserting task") {
-        context("when calling insert task"){
-            beforeEachTest {
-                given(mapperDb.reverse(task)).willReturn(taskDbEntity)
-
-                taskLocalSource.insertTask(task)
-            }
-
-            it("should taskDao be called with insertTask") {
-                verify(taskDao).insertTask(taskDbEntity)
-            }
-
-            it("should mapperDb be called with reverse") {
-                verify(mapperDb).reverse(task)
-            }
-        }
-
-        context("when inserting task succeeds"){
-
-            beforeEachTest {
-                given(taskDao.insertTask(taskDbEntity)).willReturn(Completable.complete())
-                given(mapperDb.reverse(task)).willReturn(taskDbEntity)
-
-                testObserver = taskLocalSource.insertTask(task).test()
-            }
-
-            it("should completable be completed") {
-                testObserver.assertComplete()
-            }
-        }
-
-        context("when inserting task fails"){
-
-                beforeEachTest {
-                    given(taskDao.insertTask(taskDbEntity)).willReturn(Completable.error(error))
-                    given(mapperDb.reverse(task)).willReturn(taskDbEntity)
-
-                    testObserver = taskLocalSource.insertTask(task).test()
-                }
-
-                it("should return error") {
-                    testObserver.assertError(error)
-                }
-            }
+    @Before
+    fun setUp() {
+        taskLocalSource = DefaultTaskLocalSource(taskDao, mapperDb)
     }
 
-    describe("getting all tasks") {
-        lateinit var testObserver: TestObserver<List<Task>>
+    @Test
+    fun testWhenInsertingTaskShouldCallTaskDaoInsertTask() {
+        testCoroutineRule.runBlockingTest {
+            Mockito.`when`(mapperDb.reverse(task)).thenAnswer { taskDbEntity }
 
-        context("calling get all tasks"){
-            beforeEachTest {
-                given(taskDao.getAllTasks()).willReturn(Single.just(taskDbEntities))
-                testObserver = taskLocalSource.getAllTasks().test()
-            }
+            taskLocalSource.insertTask(task)
 
-            it("should taskDao be called with getAllTasks") {
-                verify(taskDao).getAllTasks()
-            }
-
-            it("should mapperDb be called with map") {
-                verify(mapperDb).map(taskDbEntities)
-            }
-
-            it("should complete") {
-                testObserver.assertComplete()
-            }
-
-        }
-
-        context("when getting all tasks succeeds"){
-
-            beforeEachTest {
-                given(taskDao.getAllTasks()).willReturn(Single.just(taskDbEntities))
-                given(mapperDb.map(taskDbEntities)).willReturn(tasks)
-
-                testListObserver = taskLocalSource.getAllTasks().test()
-            }
-
-            it("should completable be completed") {
-                testListObserver.assertComplete()
-            }
-        }
-
-        context("when getting all tasks fails"){
-
-            beforeEachTest {
-                given(taskDao.getAllTasks()).willReturn(Single.error(error))
-                given(mapperDb.map(taskDbEntities)).willReturn(tasks)
-
-                testListObserver = taskLocalSource.getAllTasks().test()
-            }
-
-            it("should return error") {
-                testListObserver.assertError(error)
-            }
+            verify(taskDao).insertTask(taskDbEntity)
         }
     }
-})
+
+    @Test
+    fun testWhenGettingTasksShouldCallTaskDaoGetTasks() {
+        testCoroutineRule.runBlockingTest {
+            Mockito.`when`(mapperDb.map(taskDbEntity)).thenAnswer { task }
+            Mockito.`when`(taskDao.getAllTasks()).thenAnswer { taskDbEntities }
+
+            val result = taskLocalSource.getAllTasks()
+
+            Assert.assertEquals(result, tasks)
+        }
+    }
+}

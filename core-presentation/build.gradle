@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
@@ -24,10 +23,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
-
-def daggerVersion = '2.27'
-def room_version = '2.2.5'
 
 dependencies {
     implementation project(":core-android")
@@ -47,8 +50,15 @@ dependencies {
     implementation 'org.conscrypt:conscrypt-android:2.2.1'
     implementation 'androidx.multidex:multidex:2.0.1'
 
-    kapt 'com.google.dagger:dagger-compiler:2.27'
+    kapt 'com.google.dagger:dagger-compiler:' + daggerVersion
+    implementation 'com.google.dagger:dagger-android:' + daggerVersion
+    implementation 'com.google.dagger:dagger-android-support:' + daggerVersion
+    kapt 'com.google.dagger:dagger-android-processor:' + daggerVersion
+    implementation 'com.google.dagger:dagger:' + daggerVersion
+
     kapt "com.github.moxy-community:moxy-compiler:2.0.2"
 
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.0'
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
 }

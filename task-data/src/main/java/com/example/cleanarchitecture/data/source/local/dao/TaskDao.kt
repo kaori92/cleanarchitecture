@@ -12,7 +12,7 @@ import io.reactivex.Single
 interface TaskDao {
 
     @Query("SELECT * FROM TaskDbEntity")
-    fun getAllTasks(): Single<List<TaskDbEntity>>
+    fun getAllTasks(): List<TaskDbEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTask(task: TaskDbEntity): Completable

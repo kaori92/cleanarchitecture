@@ -1,136 +1,71 @@
 package com.example.cleanarchitecture.data.source.remote
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.cleanarchitecture.TestCoroutineRule
 import com.example.cleanarchitecture.data.mapper.base.Mapper
+import com.example.cleanarchitecture.data.source.TaskRemoteSource
 import com.example.cleanarchitecture.data.source.remote.model.TaskApiDto
-import com.example.cleanarchitecture.domain.model.Task
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.mock
+import com.example.taskdomain.model.Task
 import com.nhaarman.mockitokotlin2.verify
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.observers.TestObserver
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TestRule
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.MockitoJUnitRunner
 
-class TaskRemoteSourceTest : Spek({
-    lateinit var testObserver: TestObserver<Void>
+@ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
+class TaskRemoteSourceTest {
+    @get:Rule
+    val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
 
-    lateinit var testListObserver: TestObserver<List<Task>>
+    @get:Rule
+    val testCoroutineRule = TestCoroutineRule()
 
-    val taskRetrofitService by memoized {
-        mock<TaskRetrofitService>()
+    @Mock
+    private lateinit var taskRetrofitService: TaskRetrofitService
+
+    @Mock
+    private lateinit var mapperApi: Mapper<Task, TaskApiDto>
+
+    private lateinit var taskRemoteSource: TaskRemoteSource
+
+    private val title = "abc"
+    private val task = Task(title)
+    private val taskApiDto = TaskApiDto(title)
+    private val taskApiDtos = listOf(taskApiDto)
+    private val tasks = listOf(task)
+
+    @Before
+    fun setUp() {
+        taskRemoteSource = DefaultTaskRemoteSource(taskRetrofitService, mapperApi)
     }
 
-    val mapperApi by memoized {
-        mock<Mapper<Task, TaskApiDto>>()
-    }
+    @Test
+    fun testWhenInsertingTaskShouldCallTaskRetrofitServiceInsertTask() {
+        testCoroutineRule.runBlockingTest {
+            Mockito.`when`(mapperApi.reverse(task)).thenAnswer { taskApiDto }
 
-    val taskRemoteSource by memoized {
-        DefaultTaskRemoteSource(taskRetrofitService, mapperApi)
-    }
+            taskRemoteSource.insertTask(task)
 
-    val title = "abc"
-    val error = Throwable("error")
-    val task = Task(title)
-    val taskApiDto = TaskApiDto(title)
-    val taskApiDtos = listOf(taskApiDto)
-    val tasks = listOf(task)
-    val taskListSingle = Single.just(taskApiDtos)
-
-    describe("inserting task") {
-        context("when calling insert task"){
-            beforeEachTest {
-                given(mapperApi.reverse(task)).willReturn(taskApiDto)
-
-                taskRemoteSource.insertTask(task)
-            }
-
-            it("should taskRetrofitService be called with insertTask") {
-                verify(taskRetrofitService).insertTask(taskApiDto)
-            }
-
-
-            it("should mapperApi be called with reverse") {
-                verify(mapperApi).reverse(task)
-            }
-        }
-
-        context("when inserting task succeeds"){
-            beforeEachTest {
-                given(taskRetrofitService.insertTask(taskApiDto)).willReturn(Completable.complete())
-                given(mapperApi.reverse(task)).willReturn(taskApiDto)
-
-                testObserver = taskRemoteSource.insertTask(task).test()
-            }
-
-            it("should completable be completed") {
-                testObserver.assertComplete()
-            }
-        }
-
-        context("when inserting task fails"){
-
-            beforeEachTest {
-                given(taskRetrofitService.insertTask(taskApiDto)).willReturn(Completable.error(error))
-                given(mapperApi.reverse(task)).willReturn(taskApiDto)
-
-                testObserver = taskRemoteSource.insertTask(task).test()
-            }
-
-            it("should return error") {
-                testObserver.assertError(error)
-            }
+            verify(taskRetrofitService).insertTask(taskApiDto)
         }
     }
 
-    describe("getting tasks") {
-        lateinit var testObserver: TestObserver<List<Task>>
+    @Test
+    fun testWhenGettingTasksShouldCallTaskRetrofitGetTasks() {
+        testCoroutineRule.runBlockingTest {
+            Mockito.`when`(taskRetrofitService.getTasks()).thenAnswer { taskApiDtos }
+            Mockito.`when`(mapperApi.map(taskApiDto)).thenAnswer { task }
 
-        context("calling get all tasks"){
-            beforeEachTest {
-                given(taskRetrofitService.getTasks()).willReturn(taskListSingle)
-                testObserver = taskRemoteSource.getAllTasks().test()
-            }
+            val result = taskRemoteSource.getAllTasks()
 
-            it("should taskRetrofitService be called with getTasks") {
-                verify(taskRetrofitService).getTasks()
-            }
-
-            it("should mapperApi be called with map") {
-                verify(mapperApi).map(taskApiDtos)
-            }
-
-            it("should complete") {
-                testObserver.assertComplete()
-            }
-        }
-
-        context("when getting tasks succeeds"){
-
-            beforeEachTest {
-                given(taskRetrofitService.getTasks()).willReturn(taskListSingle)
-                given(mapperApi.map(taskApiDtos)).willReturn(tasks)
-
-                testListObserver = taskRemoteSource.getAllTasks().test()
-            }
-
-            it("should completable be completed") {
-                testListObserver.assertComplete()
-            }
-        }
-
-        context("when getting tasks fails"){
-
-            beforeEachTest {
-                given(taskRetrofitService.getTasks()).willReturn(Single.error(error))
-                given(mapperApi.map(taskApiDtos)).willReturn(tasks)
-
-                testListObserver = taskRemoteSource.getAllTasks().test()
-            }
-
-            it("should return error") {
-                testListObserver.assertError(error)
-            }
+            Assert.assertEquals(result, tasks)
         }
     }
-})
+}

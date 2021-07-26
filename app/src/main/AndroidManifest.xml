@@ -21,18 +21,18 @@
 
 
         <activity
-            android:name=".ui.addTask.AddTaskActivity"
+            android:name="com.example.taskpresentation.ui.addTask.AddTaskActivity"
             android:label="@string/add_task"/>
 
         <activity
-            android:name=".ui.task.TaskListActivity"
+            android:name="com.example.taskpresentation.ui.task.TaskListActivity"
             android:label="@string/tasks_list"/>
         <activity
-            android:name=".ui.addNotification.AddNotificationActivity"
+            android:name="com.example.notificationpresentation.ui.addNotification.AddNotificationActivity"
             android:label="@string/add_notification"/>
 
         <activity
-            android:name=".ui.notification.NotificationListActivity"
+            android:name="com.example.notificationpresentation.ui.notification.NotificationListActivity"
             android:label="@string/list_notifications">
         </activity>
 

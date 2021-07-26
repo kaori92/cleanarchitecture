@@ -3,9 +3,9 @@ package com.example.cleanarchitecture.string
 import android.content.Context
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
+import org.junit.Assert
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
 
 class DefaultStringServiceTest : Spek({
     val context by memoized {
@@ -30,7 +30,7 @@ class DefaultStringServiceTest : Spek({
             }
 
             it("should call context getString"){
-                assertEquals(message, result)
+                Assert.assertEquals(message, result)
             }
         }
 
